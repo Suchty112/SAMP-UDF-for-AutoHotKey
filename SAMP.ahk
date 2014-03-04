@@ -1,7 +1,9 @@
-; #### SAMP UDF r2####
+; #### SAMP UDF r5####
 ; Written by Chuck_Floyd @ gtawc.net
 ; https://github.com/FrozenBrain/SAMP-UDF-for-AutoHotKey
 ; Do not remove these lines.
+; Edit by Sheldon_Cooper @ gtawc.net
+; https://github.com/Suchty112/SAMP-UDF-for-AutoHotKey
 ; ####################
 
 ; ErrorLevels
