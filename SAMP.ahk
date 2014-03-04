@@ -21,7 +21,7 @@ global ERROR_WAIT_FOR_OBJECT		:= 12
 global ERROR_CREATE_THREAD			:= 13
 
 ; GTA Adressen
-global ADDR_ZONECODE				:= 0x10008460
+global ADDR_ZONECODE				:= 0xA49AD4
 global ADDR_POSITION_X				:= 0xB6F2E4
 global ADDR_POSITION_Y				:= 0xB6F2E8
 global ADDR_POSITION_Z				:= 0xB6F2EC
@@ -32,15 +32,14 @@ global ADDR_VEHICLE_PTR				:= 0xBA18FC
 global ADDR_VEHICLE_HPOFF			:= 0x4C0
 
 ; SAMP Adressen
-global ADDR_SAMP_INCHAT_PTR			:= 0x2071F0
-global ADDR_SAMP_INCHAT_PTR_OFF		:= 0x54
-global ADDR_SAMP_USERNAME			:= 0x206B87
-global ADDR_SAMP_CHATMSG_PTR		:= 0x2071C0
-global ADDR_SAMP_CHATMSG_PTR_OFF	:= 0x152
-global FUNC_SAMP_SENDCMD			:= 0x10002970
-global FUNC_SAMP_SENDSAY			:= 0x4A10
-global FUNC_SAMP_ADDTOCHATWND		:= 0x10002f50
-global FUNC_SAMP_SHOWGAMETEXT		:= 0x10002ba0
+global ADDR_SAMP_INCHAT_PTR			:= 0x212A94
+global ADDR_SAMP_INCHAT_PTR_OFF		:= 0x55
+global ADDR_SAMP_USERNAME			:= 0x2123F7
+global ADDR_SAMP_CHATMSG_PTR		:= 0x212A6C
+global FUNC_SAMP_SENDCMD			:= 0x7BDD0
+global FUNC_SAMP_SENDSAY			:= 0x4CA0
+global FUNC_SAMP_ADDTOCHATWND		:= 0x7AA00
+global FUNC_SAMP_SHOWGAMETEXT		:= 0x643B0
 
 ; Größen
 global SIZE_SAMP_CHATMSG			:= 0xFC
@@ -54,8 +53,9 @@ global pParam1						:= 0x0
 global pParam2						:= 0x0
 global pParam3						:= 0x0
 global pInjectFunc					:= 0x0
-global nZone						:= 0
-global nCity						:= 0
+global nZone						:= 1
+global nCity						:= 1
+global bInitZaC						:= 0
 
 ; ###################################################################################################################
 ; # SAMP-Funktionen:																								#
