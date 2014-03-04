@@ -4,6 +4,7 @@
 initZonesAndCities()
 return
 
+; R5
 ; Test für die SAMP UDF für AutoHotKey
 ; Zum Testen <NUM5> im Spiel drücken.
 Numpad5::
