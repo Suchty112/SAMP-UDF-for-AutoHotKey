@@ -1,4 +1,4 @@
-; #### SAMP UDF r5####
+; #### SAMP UDF r5#### 
 ; Written by Chuck_Floyd @ gtawc.net
 ; https://github.com/FrozenBrain/SAMP-UDF-for-AutoHotKey
 ; Do not remove these lines.
