@@ -1,4 +1,4 @@
-; #### SAMP UDF r5#### 
+; #### SAMP UDF r6#### 
 ; Written by Chuck_Floyd @ gtawc.net
 ; https://github.com/FrozenBrain/SAMP-UDF-for-AutoHotKey
 ; Do not remove these lines.
@@ -23,41 +23,43 @@ global ERROR_WAIT_FOR_OBJECT		:= 12
 global ERROR_CREATE_THREAD			:= 13
 
 ; GTA Adressen
-global ADDR_ZONECODE				:= 0xA49AD4
-global ADDR_POSITION_X				:= 0xB6F2E4
-global ADDR_POSITION_Y				:= 0xB6F2E8
-global ADDR_POSITION_Z				:= 0xB6F2EC
-global ADDR_CPED_PTR				:= 0xB6F5F0
-global ADDR_CPED_HPOFF				:= 0x540
-global ADDR_CPED_ARMOROFF			:= 0x548
-global ADDR_VEHICLE_PTR				:= 0xBA18FC
-global ADDR_VEHICLE_HPOFF			:= 0x4C0
+global ADDR_ZONECODE                            := 0xA49AD4
+global ADDR_POSITION_X                          := 0xB6F2E4
+global ADDR_POSITION_Y                          := 0xB6F2E8
+global ADDR_POSITION_Z                          := 0xB6F2EC
+global ADDR_CPED_PTR                            := 0xB6F5F0
+global ADDR_CPED_HPOFF                          := 0x540
+global ADDR_CPED_ARMOROFF                       := 0x548
+global ADDR_VEHICLE_PTR                         := 0xBA18FC
+global ADDR_VEHICLE_HPOFF                       := 0x4C0
 
 ; SAMP Adressen
-global ADDR_SAMP_INCHAT_PTR			:= 0x212A94
-global ADDR_SAMP_INCHAT_PTR_OFF		:= 0x55
-global ADDR_SAMP_USERNAME			:= 0x2123F7
-global ADDR_SAMP_CHATMSG_PTR		:= 0x212A6C
-global FUNC_SAMP_SENDCMD			:= 0x7BDD0
-global FUNC_SAMP_SENDSAY			:= 0x4CA0
-global FUNC_SAMP_ADDTOCHATWND		:= 0x7AA00
-global FUNC_SAMP_SHOWGAMETEXT		:= 0x643B0
+global ADDR_SAMP_INCHAT_PTR                     := 0x212A94
+global ADDR_SAMP_INCHAT_PTR_OFF         := 0x55
+global ADDR_SAMP_USERNAME                       := 0x2123F7
+global ADDR_SAMP_CHATMSG_PTR            := 0x212A6C
+global FUNC_SAMP_SENDCMD                        := 0x7BDD0
+global FUNC_SAMP_SENDSAY                        := 0x4CA0
+global FUNC_SAMP_ADDTOCHATWND           := 0x7AA00
+global FUNC_SAMP_SHOWGAMETEXT           := 0x643B0
+global FUNC_SAMP_PLAYAUDIOSTR   := 0x79300
+global FUNC_SAMP_STOPAUDIOSTR   := 0x78F00
 
 ; Größen
-global SIZE_SAMP_CHATMSG			:= 0xFC
-
+global SIZE_SAMP_CHATMSG                        := 0xFC
+ 
 ; Intern
-global hGTA							:= 0x0
-global dwGTAPID						:= 0x0
-global dwSAMP						:= 0x0
-global pMemory						:= 0x0
-global pParam1						:= 0x0
-global pParam2						:= 0x0
-global pParam3						:= 0x0
-global pInjectFunc					:= 0x0
-global nZone						:= 1
-global nCity						:= 1
-global bInitZaC						:= 0
+global hGTA                                                     := 0x0
+global dwGTAPID                                         := 0x0
+global dwSAMP                                           := 0x0
+global pMemory                                          := 0x0
+global pParam1                                          := 0x0
+global pParam2                                          := 0x0
+global pParam3                                          := 0x0
+global pInjectFunc                                      := 0x0
+global nZone                                            := 1
+global nCity                                            := 1
+global bInitZaC                                         := 0
 
 ; ###################################################################################################################
 ; # SAMP-Funktionen:																								#
@@ -65,7 +67,10 @@ global bInitZaC						:= 0
 ; #		- getUsername()								Liest den Namen des Spielers aus								#
 ; #		- sendChatMessage(wText)					Sendet eine Nachricht od. einen Befehl direkt an den Server		#
 ; #		- addMessageToChatWindow(wText)				Fügt eine Zeile in den Chat ein (nur für den Spieler sichtbar)	#
-; # 	- showGameText(wText, dwTime, dwTextsize)	Zeigt einen Text inmitten des Bildschirmes an					#
+; # 	- showGameText(wText, dwTime, dwTextsize)	Zeigt einen Text inmitten des Bildschirmes an	
+; #
+; #     - playAudioStream(wUrl)                                         Spielt einen "Audio Stream" ab                                                                  #
+; #     - stopAudioStream()                                                     Stoppt den aktuellen Audio Stream       #
 ; ###################################################################################################################
 ; # Spielerfunktionen:																								#
 ; # 	- getPlayerHealth()							Ermittelt die HP des Spielers									#
@@ -195,6 +200,85 @@ showGameText(wText, dwTime, dwSize) {
 	return true
 }
 
+playAudioStream(wUrl) {
+	if(!checkHandles())
+		return false
+	
+	dwFunc := dwSAMP + FUNC_SAMP_PLAYAUDIOSTR
+	
+	patchRadio()
+	
+	callWithParams(hGTA, dwFunc, [["s", wUrl], ["i", 0], ["i", 0], ["i", 0], ["i", 0], ["i", 0]], false)
+	
+	unPatchRadio()
+	
+	ErrorLevel := ERROR_OK
+	return true
+}
+
+stopAudioStream() {
+	if(!checkHandles())
+		return false
+	
+	dwFunc := dwSAMP + FUNC_SAMP_STOPAUDIOSTR
+	
+	patchRadio()
+	
+	callWithParams(hGTA, dwFunc, [["i", 1]], false)
+	
+	unPatchRadio()
+	
+	ErrorLevel := ERROR_OK
+	return true
+}
+
+patchRadio()
+{
+	if(!checkHandles())
+		return false
+		
+	global hGTA, dwSAMP, FUNC_SAMP_PLAYAUDIOSTR, FUNC_SAMP_STOPAUDIOSTR
+	
+	nop1 := 0x90909090
+	nop2 := 0x90
+	NumPut(nop1,nop1,0,"UInt")
+	NumPut(nop2,nop2,0,"UChar")
+	
+	dwFunc := dwSAMP + FUNC_SAMP_PLAYAUDIOSTR
+	writeRaw(hGTA, dwFunc, &nop1, 4)
+	writeRaw(hGTA, dwFunc+4, &nop2, 1)
+	
+	dwFunc := dwSAMP + FUNC_SAMP_STOPAUDIOSTR
+	writeRaw(hGTA, dwFunc, &nop1, 4)
+	writeRaw(hGTA, dwFunc+4, &nop2, 1)
+	return true
+}
+
+unPatchRadio()
+{
+	if(!checkHandles())
+		return false
+		
+	global hGTA, dwSAMP, FUNC_SAMP_PLAYAUDIOSTR, FUNC_SAMP_STOPAUDIOSTR
+	
+	old1 := 0x74003980
+	old2 := 0x39
+	
+	NumPut(old1,old1,0,"UInt")
+	NumPut(old2,old2,0,"UChar")
+	
+	dwFunc := dwSAMP + FUNC_SAMP_PLAYAUDIOSTR
+	writeRaw(hGTA, dwFunc, &old1, 4)
+	writeRaw(hGTA, dwFunc+4, &old2, 1)
+	
+	old2 := 0x09
+	NumPut(old2,old2,0,"UChar")
+	
+	dwFunc := dwSAMP + FUNC_SAMP_STOPAUDIOSTR
+	writeRaw(hGTA, dwFunc, &old1, 4)
+	writeRaw(hGTA, dwFunc+4, &old2, 1)
+	return true
+}
 ; ##### Spielerfunktionen #####
 getPlayerHealth() {
 	if(!checkHandles())
