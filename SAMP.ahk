@@ -4,6 +4,9 @@
 ; Do not remove these lines.
 ; Edit by Sheldon_Cooper @ gtawc.net
 ; https://github.com/Suchty112/SAMP-UDF-for-AutoHotKey
+; Einige funktionen von Paul.Phönix (playaudistram, stopaudiostream sowie die Adressen von 0.3z)
+; http://forum.revival-gaming.net/index.php?page=User&userID=36842
+; Dank dir dafür :)
 ; ####################
 
 ; ErrorLevels
