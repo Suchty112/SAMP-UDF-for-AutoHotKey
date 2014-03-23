@@ -79,14 +79,27 @@ global bInitZaC						:= 0
 ; # 	- getPlayerPingById(dwId)					Zeigt den Ping zu der Id										#
 ; # 	- getPlayerNameById(dwId)					Zeigt den Namen zu der Id										#
 ; # 	- getPlayerIdByName(wName)					Zeigt die Id zu dem Namen										#
-; # 	- updateScoreboardData()					Aktualisiert Scoreboard Inhalte									#
+; # 	- updateScoreboardData()					Aktualisiert Scoreboard Inhalte	
+; #
+; # Noch nicht eingebaut
+; # 	- IsPlayerInAnyInterrior()
+; # 	- 
 ; ###################################################################################################################
 ; # Spielerfunktionen:																								#
 ; # 	- getPlayerHealth()							Ermittelt die HP des Spielers									#
 ; #		- getPlayerArmor()							Ermittelt den Rüstungswert des Spielers							#
 ; ###################################################################################################################
 ; # Fahrzeugfunktionen:																								#
-; #		- getVehicleHealth()						Ermittelt die HP des Fahrzeugs, in dem der Spieler sitzt		#
+; #		- getVehicleHealth()Ermittelt die HP des Fahrzeugs, in dem der Spieler sitzt		#
+; #
+; # Noch nicht eingebaut
+; # 	- IsPlayerInAnyVehicle()
+; # 	- GetVehicleEngineState()
+; # 	- GetVehicleID()
+; # 	- GetVehicleLockState()
+; # 	- GetVehicleLightState()
+; # 	- IsPlayerDriver()
+; # 	- GetVehicleSeatState
 ; ###################################################################################################################
 ; # Standpunktbestimmung:																							#
 ; # 	- getCoordinates()							Ermittelt die aktuelle Position (Koordinaten)					#
