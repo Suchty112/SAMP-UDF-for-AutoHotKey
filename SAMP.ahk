@@ -65,76 +65,76 @@ global nCity						:= 1
 global bInitZaC						:= 0
 
 ; ###################################################################################################################
-; # SAMP-Funktionen:																								#
-; # 	- isInChat()								Prüft, ob der Spieler gerade chattet oder in einem Dialog ist	#
-; #		- getUsername()								Liest den Namen des Spielers aus								#
-; #		- sendChatMessage(wText)					Sendet eine Nachricht od. einen Befehl direkt an den Server		#
-; #		- addMessageToChatWindow(wText)				Fügt eine Zeile in den Chat ein (nur für den Spieler sichtbar)	#
-; # 	- showGameText(wText, dwTime, dwTextsize)	Zeigt einen Text inmitten des Bildschirmes an					#
+; # SAMP-Funktionen:													#
+; # 	- isInChat()					Prüft, ob der Spieler gerade chattet oder in einem Dialog ist	#
+; #	- getUsername()					Liest den Namen des Spielers aus				#
+; #	- SendChat(wText)				Sendet eine Nachricht od. einen Befehl direkt an den Server	#
+; #	- addChatMessage(wText)				Fügt eine Zeile in den Chat ein (nur für den Spieler sichtbar)	#
+; # 	- showGameText(wText, dwTime, dwTextsize)	Zeigt einen Text inmitten des Bildschirmes an			#
+; ##################################################################################################################	 
+; # Neue SAMP-Funktionen:												#
+; # 	- playAudioStream(wUrl)				Spielt einen "Audio Stream" ab					#
+; # 	- stopAudioStream()				Stoppt den aktuellen Audio Stream				#
+; # 	- getPlayerScoreById(dwId)			Zeigt den Score zu der Id					#
+; # 	- getPlayerPingById(dwId)			Zeigt den Ping zu der Id					#
+; # 	- getPlayerNameById(dwId)			Zeigt den Namen zu der Id					#
+; # 	- getPlayerIdByName(wName)			Zeigt die Id zu dem Namen					#
+; # 	- updateScoreboardData()			Aktualisiert Scoreboard Inhalte					#
+; #															#
+; # Noch nicht eingebaut												#
+; # 	- IsPlayerInAnyInterrior()											#
+; # 	- 														#
 ; ###################################################################################################################
-; # Neue SAMP-Funktionen:																							#
-; # 	- playAudioStream(wUrl)						Spielt einen "Audio Stream" ab									#
-; # 	- stopAudioStream()							Stoppt den aktuellen Audio Stream								#
-; # 	- getPlayerScoreById(dwId)					Zeigt den Score zu der Id										#
-; # 	- getPlayerPingById(dwId)					Zeigt den Ping zu der Id										#
-; # 	- getPlayerNameById(dwId)					Zeigt den Namen zu der Id										#
-; # 	- getPlayerIdByName(wName)					Zeigt die Id zu dem Namen										#
-; # 	- updateScoreboardData()					Aktualisiert Scoreboard Inhalte	
-; #
-; # Noch nicht eingebaut
-; # 	- IsPlayerInAnyInterrior()
-; # 	- 
+; # Spielerfunktionen:													#			
+; # 	- GetPlayerHealth()				Ermittelt die HP des Spielers					#
+; #	- GetPlayerArmor()				Ermittelt den Rüstungswert des Spielers				#
 ; ###################################################################################################################
-; # Spielerfunktionen:																								#
-; # 	- getPlayerHealth()							Ermittelt die HP des Spielers									#
-; #		- getPlayerArmor()							Ermittelt den Rüstungswert des Spielers							#
+; # Fahrzeugfunktionen:													#	
+; #	- GetVehicleHealth()				Ermittelt die HP des Fahrzeugs, in dem der Spieler sitzt	#
+; #															#
+; # Noch nicht eingebaut												#
+; # 	- IsPlayerInAnyVehicle()											#
+; # 	- GetVehicleEngineState()											#
+; # 	- GetVehicleID()												#
+; # 	- GetVehicleLockState()												#
+; # 	- GetVehicleLightState()											#
+; # 	- IsPlayerDriver()												#
+; # 	- GetVehicleSeatState												#
 ; ###################################################################################################################
-; # Fahrzeugfunktionen:																								#
-; #		- getVehicleHealth()Ermittelt die HP des Fahrzeugs, in dem der Spieler sitzt		#
-; #
-; # Noch nicht eingebaut
-; # 	- IsPlayerInAnyVehicle()
-; # 	- GetVehicleEngineState()
-; # 	- GetVehicleID()
-; # 	- GetVehicleLockState()
-; # 	- GetVehicleLightState()
-; # 	- IsPlayerDriver()
-; # 	- GetVehicleSeatState
+; # Standpunktbestimmung:												#					
+; # 	- getCoordinates()				Ermittelt die aktuelle Position (Koordinaten)			#
+; # --------------------------------------------------------------------------------------------------------------- 	#
+; # 	- initZonesAndCities()				Initialisiert eine Liste aller Standartgebiete			#
+; # 	(Voraussetzung für die folgenden Funktionen dieser Kategorie)							#
+; # 	- calculateZone(X, Y, Z)			Bestimmt die Zone (= Stadtteil) aus den geg. Koordinaten	#
+; # 	- calculateCity(X, Y, Z)			Bestimmt die Stadt aus den geg. Koordinaten			#
+; # 	- getCurrentZonecode()				Ermittelt die aktulle Zone in Kurzform				#
+; # 	- AddZone(Name, X1, Y1, Z1, X2, Y2, Z2)		Fügt eine Zone zum Index hinzu					#
+; # 	- AddCity(Name, X1, Y1, Z1, X2, Y2, Z2)		Fügt eine Stadt zum Index hinzu					#
 ; ###################################################################################################################
-; # Standpunktbestimmung:																							#
-; # 	- getCoordinates()							Ermittelt die aktuelle Position (Koordinaten)					#
-; # --------------------------------------------------------------------------------------------------------------- #
-; # 	- initZonesAndCities()						Initialisiert eine Liste aller Standartgebiete					#
-; # 												(Voraussetzung für die folgenden Funktionen dieser Kategorie)	#
-; # 	- calculateZone(X, Y, Z)					Bestimmt die Zone (= Stadtteil) aus den geg. Koordinaten		#
-; # 	- calculateCity(X, Y, Z)					Bestimmt die Stadt aus den geg. Koordinaten						#
-; # 	- getCurrentZonecode()						Ermittelt die aktulle Zone in Kurzform							#
-; # 	- AddZone(Name, X1, Y1, Z1, X2, Y2, Z2)		Fügt eine Zone zum Index hinzu									#
-; # 	- AddCity(Name, X1, Y1, Z1, X2, Y2, Z2)		Fügt eine Stadt zum Index hinzu									#
+; # Sonstiges:														#											
+; #	- checkHandles()												#											
 ; ###################################################################################################################
-; # Sonstiges:																										#
-; #		- checkHandles()																							#
-; ###################################################################################################################
-; # Speicherfunktionen (intern genutzt):																			#
-; # 	- getPID(sProcess)																							#
-; # 	- openProcess(dwPID, dwRights)																				#
-; # 	- closeProcess(hProcess)																					#
-; # 	- getModuleBaseAddress(sModule, dwPID)																		#
-; #		- readString(hProcess, dwAddress, dwLen)																	#
-; #		- readFloat(hProcess, dwAddress)																			#
-; #		- readDWORD(hProcess, dwAddress)																			#
-; #		- readRaw(hProcess, dwAddress, dwLen)																		#
-; #		- writeString(hProcess, dwAddress, wString)																	#
-; #		- writeRaw(hProcess, dwAddress, data, dwLen)																#
-; #		- virtualAllocEx(hProcess, dwSize, flAllocationType, flProtect)												#
-; #		- virtualFreeEx(hProcess, lpAddress, dwSize, dwFreeType)													#
-; #		- createRemoteThread(hProcess, lpThreadAttributes, dwStackSize, lpStartAddress, lpParameter,				#
-; #							 dwCreationFlags, lpThreadId)															#
-; #		- waitForSingleObject(hThread, dwMilliseconds)																#
-; #		- __ansiToUnicode(sString, nLen = 0)																		#
-; #		- __unicodeToAnsi(wString, nLen = 0)																		#
-; #		- __toHex(iIn)																								#
-; #		- __toLittleEndian(hexIn)																					#
+; # Speicherfunktionen (intern genutzt):										#
+; # 	- getPID(sProcess)												#
+; # 	- openProcess(dwPID, dwRights)											#
+; # 	- closeProcess(hProcess)											#
+; # 	- getModuleBaseAddress(sModule, dwPID)										#
+; #		- readString(hProcess, dwAddress, dwLen)								#
+; #		- readFloat(hProcess, dwAddress)									#
+; #		- readDWORD(hProcess, dwAddress)									#
+; #		- readRaw(hProcess, dwAddress, dwLen)									#
+; #		- writeString(hProcess, dwAddress, wString)								#
+; #		- writeRaw(hProcess, dwAddress, data, dwLen)								#
+; #		- virtualAllocEx(hProcess, dwSize, flAllocationType, flProtect)						#
+; #		- virtualFreeEx(hProcess, lpAddress, dwSize, dwFreeType)						#
+; #		- createRemoteThread(hProcess, lpThreadAttributes, dwStackSize, lpStartAddress, lpParameter,		#
+; #							 dwCreationFlags, lpThreadId)					#
+; #		- waitForSingleObject(hThread, dwMilliseconds)								#
+; #		- __ansiToUnicode(sString, nLen = 0)									#
+; #		- __unicodeToAnsi(wString, nLen = 0)									#
+; #		- __toHex(iIn)												#
+; #		- __toLittleEndian(hexIn)										#
 ; ###################################################################################################################
 
 ; ##### SAMP-Funktionen #####
@@ -180,7 +180,7 @@ getUsername() {
 	return sUsername
 }
 
-sendChatMessage(wText) {
+SendChat(wText) {
 	if(!checkHandles())
 		return false
 	
@@ -196,7 +196,7 @@ sendChatMessage(wText) {
 	return true
 }
 
-addMessageToChatWindow(wText) {
+addChatMessage(wText) {
 	if(!checkHandles())
 		return false
 	
@@ -685,7 +685,7 @@ getPlayerScoreById(dwId) {
 }
 
 ; ##### Spielerfunktionen #####
-getPlayerHealth() {
+GetPlayerHealth() {
 	if(!checkHandles())
 		return 0.0
 	
@@ -706,7 +706,7 @@ getPlayerHealth() {
 	return Round(fHealth, 2)
 }
 
-getPlayerArmor() {
+GetPlayerArmor() {
 	if(!checkHandles())
 		return 0.0
 	
@@ -727,7 +727,7 @@ getPlayerArmor() {
 	return Round(fHealth, 2)
 }
 ; ##### Fahrzeugfunktionen #####
-getVehicleHealth() {
+GetVehicleHealth() {
 	if(!checkHandles())
 		return 0.0
 	
