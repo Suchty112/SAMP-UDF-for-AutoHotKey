@@ -1,8 +1,8 @@
-; #### SAMP UDF R7 ####
+; #### SAMP UDF R8 ####
 ; SAMP Version: 0.3z R1
-; Written by Chuck_Floyd @ gtawc.net
+; Written by Chuck_Floyd 
 ; https://github.com/FrozenBrain/SAMP-UDF-for-AutoHotKey
-; Edit by Sheldon_Cooper @ gtawc.net
+; Edit by Suchty112
 ; https://github.com/Suchty112/SAMP-UDF-for-AutoHotKey
 ; und Edited by Paul_Phoenix
 ; http://forum.revival-gaming.net/index.php?page=User&userID=36842
