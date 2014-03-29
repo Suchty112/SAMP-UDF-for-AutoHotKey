@@ -1,4 +1,4 @@
-; #### SAMP UDF R8 ####
+; #### SAMP UDF R8.1 ####
 ; SAMP Version: 0.3z R1
 ; Written by Chuck_Floyd 
 ; https://github.com/FrozenBrain/SAMP-UDF-for-AutoHotKey
