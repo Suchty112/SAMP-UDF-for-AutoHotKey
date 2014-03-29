@@ -103,6 +103,7 @@ global bInitZaC						:= 0
 ; ###################################################################################################################
 ; # Standpunktbestimmung:												#					
 ; # 	- getCoordinates()				Ermittelt die aktuelle Position (Koordinaten)			#
+; #	- GetPlayerPos(X,Y,Z)				siehe oben drüber						#
 ; # --------------------------------------------------------------------------------------------------------------- 	#
 ; # 	- initZonesAndCities()				Initialisiert eine Liste aller Standartgebiete			#
 ; # 	(Voraussetzung für die folgenden Funktionen dieser Kategorie)							#
@@ -111,6 +112,8 @@ global bInitZaC						:= 0
 ; # 	- getCurrentZonecode()				Ermittelt die aktulle Zone in Kurzform				#
 ; # 	- AddZone(Name, X1, Y1, Z1, X2, Y2, Z2)		Fügt eine Zone zum Index hinzu					#
 ; # 	- AddCity(Name, X1, Y1, Z1, X2, Y2, Z2)		Fügt eine Stadt zum Index hinzu					#
+; #	- IsPlayerInRangeOfPoint(X, Y, Z, Radius)	Bestimmt ob der Spieler in der Nähe der Koordinaten ist		#
+; #	- IsIsPlayerInRangeOfPoint2D(X, Y, Radius)	Bestimmt ob der Spieler in der Nähe der Koordinaten ist		#
 ; ###################################################################################################################
 ; # Sonstiges:														#											
 ; #	- checkHandles()												#											
@@ -774,7 +777,30 @@ getCoordinates() {
 	ErrorLevel := ERROR_OK
 	return [fX, fY, fZ]
 }
-
+GetPlayerPos(ByRef fX,ByRef fY,ByRef fZ) {
+        if(!checkHandles())
+                return 0
+ 
+        fX := readFloat(hGTA, ADDR_POSITION_X)
+        if(ErrorLevel) {
+                ErrorLevel := ERROR_READ_MEMORY
+                return 0
+        }
+ 
+        fY := readFloat(hGTA, ADDR_POSITION_Y)
+        if(ErrorLevel) {
+                ErrorLevel := ERROR_READ_MEMORY
+                return 0
+        }
+ 
+        fZ := readFloat(hGTA, ADDR_POSITION_Z)
+        if(ErrorLevel) {
+                ErrorLevel := ERROR_READ_MEMORY
+                return 0
+        }
+ 
+        ErrorLevel := ERROR_OK
+}
 initZonesAndCities() {
 	AddCity("Las Venturas", 685.0, 476.093, -500.0, 3000.0, 3000.0, 500.0)
 	AddCity("San Fierro", -3000.0, -742.306, -500.0, -1270.53, 1530.24, 500.0)
@@ -1251,7 +1277,27 @@ AddCity(sName, x1, y1, z1, x2, y2, z2) {
 	city%nCity%_z2 := z2
 	nCity := nCity + 1
 }
-
+IsPlayerInRangeOfPoint(_posX, _posY, _posZ, _posRadius)
+{
+	GetPlayerPos(posX, posY, posZ)
+	X := posX -_posX
+	Y := posY -_posY
+	Z := posZ -_posZ
+	if(((X < _posRadius) && (X > -_posRadius)) && ((Y < _posRadius) && (Y > -_posRadius)) && ((Z < _posRadius) && (Z > -_posRadius)))
+		return TRUE
+	return FALSE
+}
+ 
+IsPlayerInRangeOfPoint2D(_posX, _posY, _posRadius)
+{
+ 
+	GetPlayerPos(posX, posY, posZ)
+	X := posX - _posX
+	Y := posY - _posY
+	if(((X < _posRadius) && (X > -_posRadius)) && ((Y < _posRadius) && (Y > -_posRadius)))
+		return TRUE
+	return FALSE
+}
 ; ##### Sonstiges #####
 checkHandles() {
 	if(!refreshGTA() || !refreshSAMP() || !refreshMemory()) {
