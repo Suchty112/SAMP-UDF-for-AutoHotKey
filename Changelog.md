@@ -1,6 +1,9 @@
 R8.1
+
 IsPlayerInRangeOfPoint()
+
 IsPlayerInRangeOfPoint2D()
+
 GetPlayerPos()
 
 Danke dafür an [Maximilian.Sinatra](http://forum.revival-gaming.net/index.php?page=Thread&postID=2997836#post2997836).
