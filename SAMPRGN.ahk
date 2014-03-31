@@ -1,10 +1,10 @@
-; #### SAMP UDF R8.1 RGN Version ####
+; #### SAMP UDF R8.2 ####
 ; SAMP Version: 0.3z R1
 ; Written by Chuck_Floyd 
 ; https://github.com/FrozenBrain/SAMP-UDF-for-AutoHotKey
 ; Edit by Suchty112
 ; https://github.com/Suchty112/SAMP-UDF-for-AutoHotKey
-; und Edited by Paul_Phoenix
+; und Edited by Paul_Phoenix(Adressen... Rest removt erstmal)
 ; http://forum.revival-gaming.net/index.php?page=User&userID=36842
 ; Do not remove these lines.
 
@@ -46,9 +46,8 @@ global FUNC_SAMP_ADDTOCHATWND		:= 0x7AA00
 global FUNC_SAMP_SHOWGAMETEXT		:= 0x643B0
 global FUNC_SAMP_PLAYAUDIOSTR		:= 0x79300
 global FUNC_SAMP_STOPAUDIOSTR		:= 0x78F00
-global FUNC_SAMP_SHOWDIALOG			:= 0x816F0
 
-; GrÃ¶ÃŸen
+; Größen
 global SIZE_SAMP_CHATMSG			:= 0xFC
 
 ; Intern
@@ -66,28 +65,27 @@ global bInitZaC						:= 0
 
 ; ###################################################################################################################
 ; # SAMP-Funktionen:													#
-; # 	- isInChat()					PrÃ¼ft, ob der Spieler gerade chattet oder in einem Dialog ist	#
+; # 	- isInChat()					Prüft, ob der Spieler gerade chattet oder in einem Dialog ist	#
 ; #	- getUsername()					Liest den Namen des Spielers aus				#
 ; #	- SendChat(wText)				Sendet eine Nachricht od. einen Befehl direkt an den Server	#
-; #	- addChatMessage(wText)				FÃ¼gt eine Zeile in den Chat ein (nur fÃ¼r den Spieler sichtbar)	#
+; #	- addChatMessage(wText)				Fügt eine Zeile in den Chat ein (nur für den Spieler sichtbar)	#
 ; # 	- showGameText(wText, dwTime, dwTextsize)	Zeigt einen Text inmitten des Bildschirmes an			#
 ; ##################################################################################################################	 
 ; # Neue SAMP-Funktionen:												#
 ; # 	- playAudioStream(wUrl)				Spielt einen "Audio Stream" ab					#
 ; # 	- stopAudioStream()				Stoppt den aktuellen Audio Stream				#
+; #															#
+; # Noch nicht eingebaut												#
+; # 	- IsPlayerInAnyInterrior()											#
 ; # 	- getPlayerScoreById(dwId)			Zeigt den Score zu der Id					#
 ; # 	- getPlayerPingById(dwId)			Zeigt den Ping zu der Id					#
 ; # 	- getPlayerNameById(dwId)			Zeigt den Namen zu der Id					#
 ; # 	- getPlayerIdByName(wName)			Zeigt die Id zu dem Namen					#
-; # 	- updateScoreboardData()			Aktualisiert Scoreboard Inhalte					#
-; #															#
-; # Noch nicht eingebaut												#
-; # 	- IsPlayerInAnyInterrior()											#
-; # 	- 														#
-; ###################################################################################################################
+; # 	- updateScoreboardData()			Aktualisiert Scoreboard Inhalte	
+; #######################################################################################################################
 ; # Spielerfunktionen:													#			
 ; # 	- GetPlayerHealth()				Ermittelt die HP des Spielers					#
-; #	- GetPlayerArmor()				Ermittelt den RÃ¼stungswert des Spielers				#
+; #	- GetPlayerArmor()				Ermittelt den Rüstungswert des Spielers				#
 ; ###################################################################################################################
 ; # Fahrzeugfunktionen:													#	
 ; #	- GetVehicleHealth()				Ermittelt die HP des Fahrzeugs, in dem der Spieler sitzt	#
@@ -103,17 +101,17 @@ global bInitZaC						:= 0
 ; ###################################################################################################################
 ; # Standpunktbestimmung:												#					
 ; # 	- getCoordinates()				Ermittelt die aktuelle Position (Koordinaten)			#
-; #	- GetPlayerPos(X,Y,Z)				siehe oben drÃ¼ber						#
+; #	- GetPlayerPos(X,Y,Z)				siehe oben drüber						#
 ; # --------------------------------------------------------------------------------------------------------------- 	#
 ; # 	- initZonesAndCities()				Initialisiert eine Liste aller Standartgebiete			#
-; # 	(Voraussetzung fÃ¼r die folgenden Funktionen dieser Kategorie)							#
+; # 	(Voraussetzung für die folgenden Funktionen dieser Kategorie)							#
 ; # 	- calculateZone(X, Y, Z)			Bestimmt die Zone (= Stadtteil) aus den geg. Koordinaten	#
 ; # 	- calculateCity(X, Y, Z)			Bestimmt die Stadt aus den geg. Koordinaten			#
 ; # 	- getCurrentZonecode()				Ermittelt die aktulle Zone in Kurzform				#
-; # 	- AddZone(Name, X1, Y1, Z1, X2, Y2, Z2)		FÃ¼gt eine Zone zum Index hinzu					#
-; # 	- AddCity(Name, X1, Y1, Z1, X2, Y2, Z2)		FÃ¼gt eine Stadt zum Index hinzu					#
-; #	- IsPlayerInRangeOfPoint(X, Y, Z, Radius)	Bestimmt ob der Spieler in der NÃ¤he der Koordinaten ist		#
-; #	- IsIsPlayerInRangeOfPoint2D(X, Y, Radius)	Bestimmt ob der Spieler in der NÃ¤he der Koordinaten ist		#
+; # 	- AddZone(Name, X1, Y1, Z1, X2, Y2, Z2)		Fügt eine Zone zum Index hinzu					#
+; # 	- AddCity(Name, X1, Y1, Z1, X2, Y2, Z2)		Fügt eine Stadt zum Index hinzu					#
+; #	- IsPlayerInRangeOfPoint(X, Y, Z, Radius)	Bestimmt ob der Spieler in der Nähe der Koordinaten ist		#
+; #	- IsIsPlayerInRangeOfPoint2D(X, Y, Radius)	Bestimmt ob der Spieler in der Nähe der Koordinaten ist		#
 ; ###################################################################################################################
 ; # Sonstiges:														#											
 ; #	- checkHandles()												#											
@@ -304,388 +302,6 @@ unPatchRadio()
 	return true
 }
 
-
-updateScoreboardData() {
-	
-	if(!checkHandles())
-		return false
-	
-	dwAddress := readDWORD(hGTA, dwSAMP + 0x212A80)			;g_SAMP
-	if(ErrorLevel || dwAddress==0) {
-		ErrorLevel := ERROR_READ_MEMORY
-		return false
-	}
-	
-	dwFunc := dwSAMP + 0x7D10
-	
-	VarSetCapacity(injectData, 11, 0) ;mov + call + retn
-	
-	NumPut(0xB9, injectData, 0, "UChar")
-	NumPut(dwAddress, injectData, 1, "UInt")
-	
-	NumPut(0xE8, injectData, 5, "UChar")
-	offset := dwFunc - (pInjectFunc + 10)
-	NumPut(offset, injectData, 6, "Int")
-	NumPut(0xC3, injectData, 10, "UChar")
-	
-	writeRaw(hGTA, pInjectFunc, &injectData, 11)
-	if(ErrorLevel)
-		return false
-	
-	hThread := createRemoteThread(hGTA, 0, 0, pInjectFunc, 0, 0, 0)
-	if(ErrorLevel)
-		return false
-	
-	waitForSingleObject(hThread, 0xFFFFFFFF)
-	
-	return true
-	
-}
-
-getPlayerIdByName(wName) {
-	if(!checkHandles())
-		return -1
-		
-	if(StrLen(wName) < 3 || StrLen(wName) > 24)
-		return -1
-	
-	dwAddress := readDWORD(hGTA, dwSAMP + 0x212A80)			;g_SAMP
-	if(ErrorLevel || dwAddress==0) {
-		ErrorLevel := ERROR_READ_MEMORY
-		return -1
-	}
-	
-	dwAddress := readDWORD(hGTA, dwAddress + 0x3d9)		;pPools
-	if(ErrorLevel || dwAddress==0) {
-		ErrorLevel := ERROR_READ_MEMORY
-		return -1
-	}
-	
-	dwPlayers := readDWORD(hGTA, dwAddress + 0x14) 			;g_Players
-	if(ErrorLevel || dwPlayers==0) {
-		ErrorLevel := ERROR_READ_MEMORY
-		return -1
-	}
-	
-	;----------------
-	
-	
-	dwTemp := readDWORD(hGTA, dwPlayers + 26)	;local player strlen
-	if(ErrorLevel) {
-		ErrorLevel := ERROR_READ_MEMORY
-		return -1
-	}
-	
-	if(dwTemp <= 0xf) {
-		sUsername := readString(hGTA, dwPlayers + 10, 16)
-		if(ErrorLevel) {
-			ErrorLevel := ERROR_READ_MEMORY
-			return -1
-		}
-		if(sUsername == wName) {
-			;wTemp := readWORD(hGTA, dwPlayers + 4)	;localPlayerID
-			wTemp := readMem(hGTA, dwPlayers + 4, 2, "Short")	;localPlayerID
-			if(ErrorLevel) {
-				ErrorLevel := ERROR_READ_MEMORY
-				return -1
-			}
-			ErrorLevel := ERROR_OK
-			return wTemp
-		}
-	}
-	else {
-	
-		dwAddress := readDWORD(hGTA, dwPlayers + 10)
-		if(ErrorLevel) {
-			ErrorLevel := ERROR_READ_MEMORY
-			return -1
-		}
-		sUsername := readString(hGTA, dwAddress, 25)
-		if(ErrorLevel) {
-			ErrorLevel := ERROR_READ_MEMORY
-			return -1
-		}
-		if(sUsername == wName) {
-			;wTemp := readWORD(hGTA, dwPlayers + 4)	;localPlayerID
-			wTemp := readMem(hGTA, dwPlayers + 4, 2, "Short")	;localPlayerID
-			if(ErrorLevel) {
-				ErrorLevel := ERROR_READ_MEMORY
-				return -1
-			}
-			ErrorLevel := ERROR_OK
-			return wTemp
-		}
-	}
-	
-	;-----
-		
-	Loop, 1004
-	{
-		i := A_Index-1
-		
-		dwRemoteplayer := readDWORD(hGTA, dwPlayers+0x2e+i*4)      ;pRemoteplayer
-		if(ErrorLevel) {
-			ErrorLevel := ERROR_READ_MEMORY
-			return -1
-		}
-		if(dwRemoteplayer==0)
-			continue
-			
-		dwTemp := readDWORD(hGTA, dwRemoteplayer + 36)		;iStrlenName__
-		if(ErrorLevel) {
-			ErrorLevel := ERROR_READ_MEMORY
-			return -1
-		}
-		if(dwTemp <= 0xf)
-		{
-			sUsername := readString(hGTA, dwRemoteplayer+0x14, 16)
-			if(ErrorLevel) {
-				ErrorLevel := ERROR_READ_MEMORY
-				return -1
-			}
-			if(sUsername == wName) {
-				ErrorLevel := ERROR_OK
-				return i
-			}
-		}
-		else {
-			dwAddress := readDWORD(hGTA, dwRemoteplayer + 0x14)
-			if(ErrorLevel || dwAddress==0) {
-				ErrorLevel := ERROR_READ_MEMORY
-				return -1
-			}
-			sUsername := readString(hGTA, dwAddress, 25)
-			if(ErrorLevel) {
-				ErrorLevel := ERROR_READ_MEMORY
-				return -1
-			}
-			if(sUsername == wName) {
-				ErrorLevel := ERROR_OK
-				return i
-			}
-		}
-	}
-	
-	
-	;----------------
-	ErrorLevel := ERROR_OK
-	return -1
-}
-
-getPlayerNameById(dwId) {
-	if(!checkHandles())
-		return ""
-		
-	if(dwId < 0 || dwId > 1004)
-		return ""
-	
-	dwAddress := readDWORD(hGTA, dwSAMP + 0x212A80)			;g_SAMP
-	if(ErrorLevel || dwAddress==0) {
-		ErrorLevel := ERROR_READ_MEMORY
-		return ""
-	}
-	
-	dwAddress := readDWORD(hGTA, dwAddress + 0x3d9)		;pPools
-	if(ErrorLevel || dwAddress==0) {
-		ErrorLevel := ERROR_READ_MEMORY
-		return ""
-	}
-	
-	dwPlayers := readDWORD(hGTA, dwAddress + 0x14) 			;g_Players
-	if(ErrorLevel || dwPlayers==0) {
-		ErrorLevel := ERROR_READ_MEMORY
-		return ""
-	}
-	
-	;wTemp := readWORD(hGTA, dwPlayers + 4)	;localPlayerID
-	wTemp := readMem(hGTA, dwPlayers + 4, 2, "Short")	;localPlayerID
-	if(ErrorLevel) {
-		ErrorLevel := ERROR_READ_MEMORY
-		return ""
-	}
-	if(wTemp == dwId) {
-		dwTemp2 := readDWORD(hGTA, dwPlayers + 26)
-		if(ErrorLevel) {
-			ErrorLevel := ERROR_READ_MEMORY
-			return ""
-		}
-		if(dwTemp2 <= 0xf) {
-			sUsername := readString(hGTA, dwPlayers + 10, 16)
-			if(ErrorLevel) {
-				ErrorLevel := ERROR_READ_MEMORY
-				return ""
-			}
-			ErrorLevel := ERROR_OK
-			return sUsername
-		}
-		dwAddress := readDWORD(hGTA, dwPlayers + 10)
-		if(ErrorLevel) {
-			ErrorLevel := ERROR_READ_MEMORY
-			return ""
-		}
-		sUsername := readString(hGTA, dwAddress, 25)
-		if(ErrorLevel) {
-			ErrorLevel := ERROR_READ_MEMORY
-			return ""
-		}
-		ErrorLevel := ERROR_OK
-		return sUsername
-	}
-	
-	dwRemoteplayer := readDWORD(hGTA, dwPlayers+0x2e+dwId*4)      ;pRemoteplayer
-	if(ErrorLevel || dwRemoteplayer==0) {
-		ErrorLevel := ERROR_READ_MEMORY
-		return ""
-	}
-	
-	dwTemp := readDWORD(hGTA, dwRemoteplayer + 36)		;iStrlenName__
-	if(ErrorLevel) {
-		ErrorLevel := ERROR_READ_MEMORY
-		return ""
-	}
-	if(dwTemp <= 0xf)
-	{
-		sUsername := readString(hGTA, dwRemoteplayer+0x14, 16)
-		if(ErrorLevel) {
-			ErrorLevel := ERROR_READ_MEMORY
-			return ""
-		}
-		ErrorLevel := ERROR_OK
-		return sUsername
-	}
-	
-	dwAddress := readDWORD(hGTA, dwRemoteplayer + 0x14)
-	if(ErrorLevel || dwAddress==0) {
-		ErrorLevel := ERROR_READ_MEMORY
-		return ""
-	}
-	
-	sUsername := readString(hGTA, dwAddress, 25)
-	if(ErrorLevel) {
-		ErrorLevel := ERROR_READ_MEMORY
-		return ""
-	}
-	ErrorLevel := ERROR_OK
-	return sUsername
-}
-
-getPlayerPingById(dwId) {
-	if(!checkHandles())
-		return -1
-		
-	if(dwId < 0 || dwId > 1004)
-		return -1
-	
-	dwAddress := readDWORD(hGTA, dwSAMP + 0x212A80)			;g_SAMP
-	if(ErrorLevel || dwAddress==0) {
-		ErrorLevel := ERROR_READ_MEMORY
-		return -1
-	}
-	
-	dwAddress := readDWORD(hGTA, dwAddress + 0x3d9)		;pPools
-	if(ErrorLevel || dwAddress==0) {
-		ErrorLevel := ERROR_READ_MEMORY
-		return -1
-	}
-	
-	dwPlayers := readDWORD(hGTA, dwAddress + 0x14) 			;g_Players
-	if(ErrorLevel || dwPlayers==0) {
-		ErrorLevel := ERROR_READ_MEMORY
-		return -1
-	}
-	
-	;wTemp := readWORD(hGTA, dwPlayers + 4)	;localPlayerID
-	wTemp := readMem(hGTA, dwPlayers + 4, 2, "Short")	;localPlayerID
-	if(ErrorLevel) {
-		ErrorLevel := ERROR_READ_MEMORY
-		return -1
-	}
-	
-	if(wTemp == dwId) {
-		;dwTemp := readDWORD(hGTA, dwPlayers + 0x26)
-		dwTemp := readMem(hGTA, dwPlayers + 0x26, 4, "Int")
-		if(ErrorLevel) {
-			ErrorLevel := ERROR_READ_MEMORY
-			return -1
-		}
-		ErrorLevel := ERROR_OK
-		return dwTemp
-	}
-	
-	dwRemoteplayer := readDWORD(hGTA, dwPlayers+0x2e+dwId*4)      ;pRemoteplayer
-	if(ErrorLevel || dwRemoteplayer==0) {
-		ErrorLevel := ERROR_READ_MEMORY
-		return -1
-	}
-	
-	;dwTemp := readDWORD(hGTA, dwRemoteplayer + 12)
-	dwTemp := readMem(hGTA, dwRemoteplayer + 12, 4, "Int")
-	if(ErrorLevel) {
-		ErrorLevel := ERROR_READ_MEMORY
-		return -1
-	}
-	ErrorLevel := ERROR_OK
-	return dwTemp
-}
-
-getPlayerScoreById(dwId) {
-	if(!checkHandles())
-		return ""
-		
-	if(dwId < 0 || dwId > 1004)
-		return ""
-	
-	dwAddress := readDWORD(hGTA, dwSAMP + 0x212A80)			;g_SAMP
-	if(ErrorLevel || dwAddress==0) {
-		ErrorLevel := ERROR_READ_MEMORY
-		return ""
-	}
-	
-	dwAddress := readDWORD(hGTA, dwAddress + 0x3d9)		;pPools
-	if(ErrorLevel || dwAddress==0) {
-		ErrorLevel := ERROR_READ_MEMORY
-		return ""
-	}
-	
-	dwPlayers := readDWORD(hGTA, dwAddress + 0x14) 			;g_Players
-	if(ErrorLevel || dwPlayers==0) {
-		ErrorLevel := ERROR_READ_MEMORY
-		return ""
-	}
-	
-	;wTemp := readWORD(hGTA, dwPlayers + 4)	;localPlayerID
-	wTemp := readMem(hGTA, dwPlayers + 4, 2, "Short")	;localPlayerID
-	if(ErrorLevel) {
-		ErrorLevel := ERROR_READ_MEMORY
-		return ""
-	}
-	
-	if(wTemp == dwId) {
-		;dwTemp := readDWORD(hGTA, dwPlayers + 0x2a)
-		dwTemp := readMem(hGTA, dwPlayers + 0x2a, 4, "Int")
-		if(ErrorLevel) {
-			ErrorLevel := ERROR_READ_MEMORY
-			return ""
-		}
-		ErrorLevel := ERROR_OK
-		return dwTemp
-	}
-	
-	dwRemoteplayer := readDWORD(hGTA, dwPlayers+0x2e+dwId*4)      ;pRemoteplayer
-	if(ErrorLevel || dwRemoteplayer==0) {
-		ErrorLevel := ERROR_READ_MEMORY
-		return ""
-	}
-	
-	;dwTemp := readDWORD(hGTA, dwRemoteplayer + 4)
-	dwTemp := readMem(hGTA, dwRemoteplayer + 4, 4, "Int")
-	if(ErrorLevel) {
-		ErrorLevel := ERROR_READ_MEMORY
-		return ""
-	}
-	ErrorLevel := ERROR_OK
-	return dwTemp
-}
 
 ; ##### Spielerfunktionen #####
 GetPlayerHealth() {
@@ -1135,4 +751,719 @@ initZonesAndCities() {
 	AddZone("The Sherman Dam", -968.772, 1929.410, -3.0, -481.126, 2155.260, 200.000)
 	AddZone("Esplanade North", -1996.660, 1358.900, -4.5, -1524.240, 1592.510, 200.000)
 	AddZone("Financial", -1871.720, 744.170, -6.1, -1701.300, 1176.420, 300.000)
-	AddZone("Garcia", -2411.220, -222.589, -1.
+	AddZone("Garcia", -2411.220, -222.589, -1.14, -2173.040, 265.243, 200.000)
+	AddZone("Montgomery", 1119.510, 119.526, -3.0, 1451.400, 493.323, 200.000)
+	AddZone("Creek", 2749.900, 1937.250, -89.084, 2921.620, 2669.790, 110.916)
+	AddZone("Los Santos International", 1249.620, -2394.330, -89.084, 1852.000, -2179.250, 110.916)
+	AddZone("Santa Maria Beach", 72.648, -2173.290, -89.084, 342.648, -1684.650, 110.916)
+	AddZone("Mulholland Intersection", 1463.900, -1150.870, -89.084, 1812.620, -768.027, 110.916)
+	AddZone("Angel Pine", -2324.940, -2584.290, -6.1, -1964.220, -2212.110, 200.000)
+	AddZone("Verdant Meadows", 37.032, 2337.180, -3.0, 435.988, 2677.900, 200.000)
+	AddZone("Octane Springs", 338.658, 1228.510, 0.000, 664.308, 1655.050, 200.000)
+	AddZone("Come-A-Lot", 2087.390, 943.235, -89.084, 2623.180, 1203.230, 110.916)
+	AddZone("Redsands West", 1236.630, 1883.110, -89.084, 1777.390, 2142.860, 110.916)
+	AddZone("Santa Maria Beach", 342.648, -2173.290, -89.084, 647.712, -1684.650, 110.916)
+	AddZone("Verdant Bluffs", 1249.620, -2179.250, -89.084, 1692.620, -1842.270, 110.916)
+	AddZone("Las Venturas Airport", 1236.630, 1203.280, -89.084, 1457.370, 1883.110, 110.916)
+	AddZone("Flint Range", -594.191, -1648.550, 0.000, -187.700, -1276.600, 200.000)
+	AddZone("Verdant Bluffs", 930.221, -2488.420, -89.084, 1249.620, -2006.780, 110.916)
+	AddZone("Palomino Creek", 2160.220, -149.004, 0.000, 2576.920, 228.322, 200.000)
+	AddZone("Ocean Docks", 2373.770, -2697.090, -89.084, 2809.220, -2330.460, 110.916)
+	AddZone("Easter Bay Airport", -1213.910, -50.096, -4.5, -947.980, 578.396, 200.000)
+	AddZone("Whitewood Estates", 883.308, 1726.220, -89.084, 1098.310, 2507.230, 110.916)
+	AddZone("Calton Heights", -2274.170, 744.170, -6.1, -1982.320, 1358.900, 200.000)
+	AddZone("Easter Basin", -1794.920, 249.904, -9.1, -1242.980, 578.396, 200.000)
+	AddZone("Los Santos Inlet", -321.744, -2224.430, -89.084, 44.615, -1724.430, 110.916)
+	AddZone("Doherty", -2173.040, -222.589, -1.0, -1794.920, 265.243, 200.000)
+	AddZone("Mount Chiliad", -2178.690, -2189.910, -47.917, -2030.120, -1771.660, 576.083)
+	AddZone("Fort Carson", -376.233, 826.326, -3.0, 123.717, 1220.440, 200.000)
+	AddZone("Foster Valley", -2178.690, -1115.580, 0.000, -1794.920, -599.884, 200.000)
+	AddZone("Ocean Flats", -2994.490, -222.589, -1.0, -2593.440, 277.411, 200.000)
+	AddZone("Fern Ridge", 508.189, -139.259, 0.000, 1306.660, 119.526, 200.000)
+	AddZone("Bayside", -2741.070, 2175.150, 0.000, -2353.170, 2722.790, 200.000)
+	AddZone("Las Venturas Airport", 1457.370, 1203.280, -89.084, 1777.390, 1883.110, 110.916)
+	AddZone("Blueberry Acres", -319.676, -220.137, 0.000, 104.534, 293.324, 200.000)
+	AddZone("Palisades", -2994.490, 458.411, -6.1, -2741.070, 1339.610, 200.000)
+	AddZone("North Rock", 2285.370, -768.027, 0.000, 2770.590, -269.740, 200.000)
+	AddZone("Hunter Quarry", 337.244, 710.840, -115.239, 860.554, 1031.710, 203.761)
+	AddZone("Los Santos International", 1382.730, -2730.880, -89.084, 2201.820, -2394.330, 110.916)
+	AddZone("Missionary Hill", -2994.490, -811.276, 0.000, -2178.690, -430.276, 200.000)
+	AddZone("San Fierro Bay", -2616.400, 1659.680, -3.0, -1996.660, 2175.150, 200.000)
+	AddZone("Restricted Area", -91.586, 1655.050, -50.000, 421.234, 2123.010, 250.000)
+	AddZone("Mount Chiliad", -2997.470, -1115.580, -47.917, -2178.690, -971.913, 576.083)
+	AddZone("Mount Chiliad", -2178.690, -1771.660, -47.917, -1936.120, -1250.970, 576.083)
+	AddZone("Easter Bay Airport", -1794.920, -730.118, -3.0, -1213.910, -50.096, 200.000)
+	AddZone("The Panopticon", -947.980, -304.320, -1.1, -319.676, 327.071, 200.000)
+	AddZone("Shady Creeks", -1820.640, -2643.680, -8.0, -1226.780, -1771.660, 200.000)
+	AddZone("Back o Beyond", -1166.970, -2641.190, 0.000, -321.744, -1856.030, 200.000)
+	AddZone("Mount Chiliad", -2994.490, -2189.910, -47.917, -2178.690, -1115.580, 576.083)
+	AddZone("Tierra Robada", -1213.910, 596.349, -242.990, -480.539, 1659.680, 900.000)
+	AddZone("Flint County", -1213.910, -2892.970, -242.990, 44.615, -768.027, 900.000)
+	AddZone("Whetstone", -2997.470, -2892.970, -242.990, -1213.910, -1115.580, 900.000)
+	AddZone("Bone County", -480.539, 596.349, -242.990, 869.461, 2993.870, 900.000)
+	AddZone("Tierra Robada", -2997.470, 1659.680, -242.990, -480.539, 2993.870, 900.000)
+	AddZone("San Fierro", -2997.470, -1115.580, -242.990, -1213.910, 1659.680, 900.000)
+	AddZone("Las Venturas", 869.461, 596.349, -242.990, 2997.060, 2993.870, 900.000)
+	AddZone("Red County", -1213.910, -768.027, -242.990, 2997.060, 596.349, 900.000)
+	AddZone("Los Santos", 44.615, -2892.970, -242.990, 2997.060, -768.027, 900.000)
+}
+
+calculateZone(posX, posY, posZ) {
+	global
+	
+	if ( bInitZaC == 0 )
+	{
+		initZonesAndCities()
+		bInitZaC := 1
+	}
+		
+	Loop % nZone
+	{
+		if (posX >= zone%A_Index%_x1) and (posY >= zone%A_Index%_y1) and (posZ >= zone%A_Index%_z1) and (posX <= zone%A_Index%_x2) and (posY <= zone%A_Index%_y2) and (posZ <= zone%A_Index%_z2)
+		{
+			ErrorLevel := ERROR_OK
+			return zone%A_Index%_name
+		}
+	}
+	
+	ErrorLevel := ERROR_ZONE_NOT_FOUND
+	return "Unbekannt"
+}
+
+calculateCity(posX, posY, posZ) {
+	global
+	
+	if ( bInitZaC == 0 )
+	{
+		initZonesAndCities()
+		bInitZaC := 1
+	}
+	local smallestCity = "Unbekannt"
+	local currentCitySize = 0
+	local smallestCitySize
+	
+	Loop % nCity
+	{
+		if (posX >= city%A_Index%_x1) and (posY >= city%A_Index%_y1) and (posZ >= city%A_Index%_z1) and (posX <= city%A_Index%_x2) and (posY <= city%A_Index%_y2) and (posZ <= city%A_Index%_z2)
+		{
+			currentCitySize = ((city%A_Index%_x2 - city%A_Index%_x1) * (city%A_Index%_y2 - city%A_Index%_y1) * (city%A_Index%_z2 - city%A_Index%_z1))
+			if (smallestCity == "Unbekannt") or (currentCitySize < smallestCitySize)
+			{
+				smallestCity := city%A_Index%_name
+				smallestCitySize := currentCitySize
+			}
+		}
+	}
+	
+	if(smallestCity == "Unbekannt") {
+		ErrorLevel := ERROR_CITY_NOT_FOUND
+	} else {
+		ErrorLevel := ERROR_OK
+	}
+	return smallestCity
+}
+
+getCurrentZonecode() {
+	if(!checkHandles())
+		return ""
+	
+	return readString(hGTA, ADDR_ZONECODE, 5)
+}
+
+AddZone(sName, x1, y1, z1, x2, y2, z2) {
+	global
+	zone%nZone%_name := sName
+	zone%nZone%_x1 := x1
+	zone%nZone%_y1 := y1
+	zone%nZone%_z1 := z1
+	zone%nZone%_x2 := x2
+	zone%nZone%_y2 := y2
+	zone%nZone%_z2 := z2
+	nZone := nZone + 1
+}
+
+AddCity(sName, x1, y1, z1, x2, y2, z2) {
+	global
+	city%nCity%_name := sName
+	city%nCity%_x1 := x1
+	city%nCity%_y1 := y1
+	city%nCity%_z1 := z1
+	city%nCity%_x2 := x2
+	city%nCity%_y2 := y2
+	city%nCity%_z2 := z2
+	nCity := nCity + 1
+}
+IsPlayerInRangeOfPoint(_posX, _posY, _posZ, _posRadius)
+{
+	GetPlayerPos(posX, posY, posZ)
+	X := posX -_posX
+	Y := posY -_posY
+	Z := posZ -_posZ
+	if(((X < _posRadius) && (X > -_posRadius)) && ((Y < _posRadius) && (Y > -_posRadius)) && ((Z < _posRadius) && (Z > -_posRadius)))
+		return TRUE
+	return FALSE
+}
+ 
+IsPlayerInRangeOfPoint2D(_posX, _posY, _posRadius)
+{
+ 
+	GetPlayerPos(posX, posY, posZ)
+	X := posX - _posX
+	Y := posY - _posY
+	if(((X < _posRadius) && (X > -_posRadius)) && ((Y < _posRadius) && (Y > -_posRadius)))
+		return TRUE
+	return FALSE
+}
+; ##### Sonstiges #####
+checkHandles() {
+	if(!refreshGTA() || !refreshSAMP() || !refreshMemory()) {
+		return false
+	} else {
+		return true
+	}
+	
+	return true
+}
+
+refreshGTA() {
+	newPID := getPID("rgn_ac_gta.exe")
+	if(!newPID) {							; GTA nicht gefunden
+		if(hGTA) {							; Handle offen
+			virtualFreeEx(hGTA, pMemory, 0, 0x8000)
+			closeProcess(hGTA)
+			hGTA := 0x0
+		}
+		dwGTAPID := 0
+		hGTA := 0x0
+		dwSAMP := 0x0
+		return false
+	}
+	
+	if(!hGTA || (dwGTAPID != newPID)) {		; PID geändert / Handle geschlossen
+		hGTA := openProcess(newPID)
+		if(ErrorLevel) {					; openProcess fehlgeschlagen
+			dwGTAPID := 0
+			hGTA := 0x0
+			dwSAMP := 0x0
+			return false
+		}
+		dwGTAPID := newPID
+		dwSAMP := 0x0
+		return true
+	}
+	return true
+}
+
+refreshSAMP() {
+	if(dwSAMP)
+		return true
+	
+	dwSAMP := getModuleBaseAddress("samp.dll", hGTA)
+	if(!dwSAMP)
+		return false
+	
+	return true
+}
+
+refreshMemory() {
+	if(!pMemory) {
+		pMemory 	:= virtualAllocEx(hGTA, 4096, 0x1000 | 0x2000, 0x40)
+		pParam1 	:= pMemory
+		pParam2 	:= pMemory + 1024
+		pParam3 	:= pMemory + 2048
+		pInjectFunc := pMemory + 3072
+	}
+	return true
+}
+
+; ##### Speicherfunktionen #####
+getPID(sProcess) {
+	Process, Exist, %sProcess%
+	dwPID = %ErrorLevel%
+	if(dwPID == 0) {
+		ErrorLevel := ERROR_PROCESS_NOT_FOUND
+		return 0
+	}
+	
+	ErrorLevel := ERROR_OK
+	return dwPID
+}
+
+openProcess(dwPID, dwRights = 0x1F0FFF) {
+	hProcess := DllCall("OpenProcess"
+						, "UInt", dwRights
+						, "int",  0
+						, "UInt", dwPID
+						, "Uint")
+	if(hProcess == 0) {
+		ErrorLevel := ERROR_OPEN_PROCESS
+		return 0
+	}
+	
+	ErrorLevel := ERROR_OK
+	return hProcess
+}
+
+closeProcess(hProcess) {
+	if(hProcess == 0) {
+		ErrorLevel := ERROR_INVALID_HANDLE
+		return 0
+	}
+	
+	dwRet := DllCall(	"CloseHandle"
+						, "Uint", hProcess
+						, "UInt")
+	ErrorLevel := ERROR_OK
+}
+
+getModuleBaseAddress(sModule, hProcess) {
+	if(!sModule) {
+		ErrorLevel := ERROR_MODULE_NOT_FOUND
+		return 0
+	}
+	
+	if(!hProcess) {
+		ErrorLevel := ERROR_INVALID_HANDLE
+		return 0
+	}
+	
+	dwSize = 1024*4					; 1024 * sizeof(HMODULE = 4)
+	VarSetCapacity(hMods, dwSize)	
+	VarSetCapacity(cbNeeded, 4)		; DWORD = 4
+	dwRet := DllCall(	"Psapi.dll\EnumProcessModules"
+						, "UInt", hProcess
+						, "UInt", &hMods
+						, "UInt", dwSize
+						, "UInt*", cbNeeded
+						, "UInt")
+	if(dwRet == 0) {
+		ErrorLevel := ERROR_ENUM_PROCESS_MODULES
+		return 0
+	}
+	
+	dwMods := cbNeeded / 4			; cbNeeded / sizeof(HMDOULE = 4)
+	i := 0
+	VarSetCapacity(hModule, 4)		; HMODULE = 4
+	VarSetCapacity(sCurModule, 260)	; MAX_PATH = 260
+	while(i < dwMods) {
+		hModule := NumGet(hMods, i*4)
+		DllCall("Psapi.dll\GetModuleFileNameEx"
+				, "UInt", hProcess
+				, "UInt", hModule
+				, "Str", sCurModule
+				, "UInt", 260)
+		SplitPath, sCurModule, sFilename
+		if(sModule == sFilename) {
+			ErrorLevel := ERROR_OK
+			return hModule
+		}
+		i := i + 1
+	}
+	
+	ErrorLevel := ERROR_MODULE_NOT_FOUND
+	return 0
+}
+
+readString(hProcess, dwAddress, dwLen) {
+	if(!hProcess) {
+		ErrorLevel := ERROR_INVALID_HANDLE
+		return 0
+	}
+	
+	VarSetCapacity(sRead, dwLen)
+	dwRet := DllCall(	"ReadProcessMemory"
+						, "UInt", hProcess
+						, "UInt", dwAddress
+						, "Str", sRead
+						, "UInt", dwLen
+						, "UInt*", 0
+						, "UInt")
+	if(dwRet == 0) {
+		ErrorLevel := ERROR_READ_MEMORY
+		return 0
+	}
+	
+	ErrorLevel := ERROR_OK
+	return __ansiToUnicode(sRead)
+}
+
+readFloat(hProcess, dwAddress) {
+	if(!hProcess) {
+		ErrorLevel := ERROR_INVALID_HANDLE
+		return 0
+	}
+	
+	VarSetCapacity(dwRead, 4)	; float = 4
+	dwRet := DllCall(	"ReadProcessMemory"
+						, "UInt",  hProcess
+						, "UInt",  dwAddress
+						, "Str",   dwRead
+						, "UInt",  4
+						, "UInt*", 0
+						, "UInt")
+	if(dwRet == 0) {
+		ErrorLevel := ERROR_READ_MEMORY
+		return 0
+	}
+	
+	ErrorLevel := ERROR_OK
+	return NumGet(dwRead, 0, "Float")
+}
+
+readDWORD(hProcess, dwAddress) {
+	if(!hProcess) {
+		ErrorLevel := ERROR_INVALID_HANDLE
+		return 0
+	}
+	
+	VarSetCapacity(dwRead, 4)	; DWORD = 4
+	dwRet := DllCall(	"ReadProcessMemory"
+						, "UInt",  hProcess
+						, "UInt",  dwAddress
+						, "Str",   dwRead
+						, "UInt",  4
+						, "UInt*", 0)
+	if(dwRet == 0) {
+		ErrorLevel := ERROR_READ_MEMORY
+		return 0
+	}
+	
+	ErrorLevel := ERROR_OK
+	return NumGet(dwRead, 0, "UInt")
+}
+
+readWORD(hProcess, dwAddress) {
+	if(!hProcess) {
+		ErrorLevel := ERROR_INVALID_HANDLE
+		return 0
+	}
+	
+	VarSetCapacity(wRead, 2)
+	dwRet := DllCall(	"ReadProcessMemory"
+						, "UInt",  hProcess
+						, "UInt",  dwAddress
+						, "Str",   wRead
+						, "UInt",  2
+						, "UInt*", 0)
+	if(dwRet == 0) {
+		ErrorLevel := ERROR_READ_MEMORY
+		return 0
+	}
+	
+	ErrorLevel := ERROR_OK
+	return NumGet(wRead, 0, "UShort")
+}
+
+readMem(hProcess, dwAddress, dwLen=4, type="UInt") {
+	if(!hProcess) {
+		ErrorLevel := ERROR_INVALID_HANDLE
+		return 0
+	}
+	
+	VarSetCapacity(dwRead, dwLen)
+	dwRet := DllCall(	"ReadProcessMemory"
+						, "UInt",  hProcess
+						, "UInt",  dwAddress
+						, "Str",   dwRead
+						, "UInt",  dwLen
+						, "UInt*", 0)
+	if(dwRet == 0) {
+		ErrorLevel := ERROR_READ_MEMORY
+		return 0
+	}
+	
+	ErrorLevel := ERROR_OK
+	return NumGet(dwRead, 0, type)
+}
+
+writeString(hProcess, dwAddress, wString) {
+	if(!hProcess) {
+		ErrorLevel := ERROR_INVALID_HANDLE
+		return false
+	}
+	
+	sString := __unicodeToAnsi(wString)
+	
+	dwRet := DllCall(	"WriteProcessMemory"
+						, "UInt", hProcess
+						, "UInt", dwAddress
+						, "Str", sString
+						, "UInt", StrLen(wString) + 1
+						, "UInt", 0
+						, "UInt")
+	if(dwRet == 0) {
+		ErrorLEvel := ERROR_WRITE_MEMORY
+		return false
+	}
+	
+	ErrorLevel := ERROR_OK
+	return true
+}
+
+writeRaw(hProcess, dwAddress, pBuffer, dwLen) {
+	if(!hProcess) {
+		ErrorLevel := ERROR_INVALID_HANDLE
+		return false
+	}
+	
+	dwRet := DllCall(	"WriteProcessMemory"
+						, "UInt", hProcess
+						, "UInt", dwAddress
+						, "UInt", pBuffer
+						, "UInt", dwLen
+						, "UInt", 0
+						, "UInt")
+	if(dwRet == 0) {
+		ErrorLEvel := ERROR_WRITE_MEMORY
+		return false
+	}
+	
+	ErrorLevel := ERROR_OK
+	return true
+}
+
+callWithParams(hProcess, dwFunc, aParams, bCleanupStack = true) {
+	if(!hProcess) {
+		ErrorLevel := ERROR_INVALID_HANDLE
+		return false
+	}
+	validParams := 0
+	
+	i := aParams.MaxIndex()
+	
+	;		 i * PUSH + CALL + RETN
+	dwLen := i * 5    + 5    + 1
+	if(bCleanupStack)
+		dwLen += 3
+	VarSetCapacity(injectData, i * 5    + 5	   + 3       + 1, 0)
+	
+	while(i > 0) {
+		if(aParams[i][1] != "") {
+			dwMemAddress := pParam%i%
+			if(aParams[i][1] == "p") {
+				dwMemAddress := aParams[i][2]
+			} else if(aParams[i][1] == "s") {
+				writeString(hProcess, dwMemAddress, aParams[i][2])
+				if(ErrorLevel)
+					return false
+			} else if(aParams[i][1] == "i") {
+				dwMemAddress := aParams[i][2]
+			} else {
+				return false
+			}
+			NumPut(0x68, injectData, validParams * 5, "UChar")
+			NumPut(dwMemAddress, injectData, validParams * 5 + 1, "UInt")
+			validParams += 1
+		}
+		i -= 1
+	}
+	
+	offset := dwFunc - ( pInjectFunc + validParams * 5 + 5 )
+	NumPut(0xE8, injectData, validParams * 5, "UChar")
+	NumPut(offset, injectData, validParams * 5 + 1, "Int")
+	
+	if(bCleanupStack) {
+		NumPut(0xC483, injectData, validParams * 5 + 5, "UShort")
+		NumPut(validParams*4, injectData, validParams * 5 + 7, "UChar")
+		
+		NumPut(0xC3, injectData, validParams * 5 + 8, "UChar")
+	} else {
+		NumPut(0xC3, injectData, validParams * 5 + 5, "UChar")
+	}
+	
+	writeRaw(hGTA, pInjectFunc, &injectData, dwLen)
+	if(ErrorLevel)
+		return false
+	
+	hThread := createRemoteThread(hGTA, 0, 0, pInjectFunc, 0, 0, 0)
+	if(ErrorLevel)
+		return false
+	
+	waitForSingleObject(hThread, 0xFFFFFFFF)
+	
+	return true
+}
+
+virtualAllocEx(hProcess, dwSize, flAllocationType, flProtect) {
+	if(!hProcess) {
+		ErrorLevel := ERROR_INVALID_HANDLE
+		return 0
+	}
+	
+	dwRet := DllCall(	"VirtualAllocEx"
+						, "UInt", hProcess
+						, "UInt", 0
+						, "UInt", dwSize
+						, "UInt", flAllocationType
+						, "UInt", flProtect
+						, "UInt")
+	if(dwRet == 0) {
+		ErrorLEvel := ERROR_ALLOC_MEMORY
+		return 0
+	}
+	
+	ErrorLevel := ERROR_OK
+	return dwRet
+}
+
+virtualFreeEx(hProcess, lpAddress, dwSize, dwFreeType) {
+	if(!hProcess) {
+		ErrorLevel := ERROR_INVALID_HANDLE
+		return 0
+	}
+	
+	dwRet := DllCall(	"VirtualFreeEx"
+						, "UInt", hProcess
+						, "UInt", lpAddress
+						, "UInt", dwSize
+						, "UInt", dwFreeType
+						, "UInt")
+	if(dwRet == 0) {
+		ErrorLEvel := ERROR_FREE_MEMORY
+		return 0
+	}
+	
+	ErrorLevel := ERROR_OK
+	return dwRet
+}
+
+createRemoteThread(hProcess, lpThreadAttributes, dwStackSize, lpStartAddress, lpParameter, dwCreationFlags, lpThreadId) {
+	if(!hProcess) {
+		ErrorLevel := ERROR_INVALID_HANDLE
+		return 0
+	}
+	
+	dwRet := DllCall(	"CreateRemoteThread"
+						, "UInt", hProcess
+						, "UInt", lpThreadAttributes
+						, "UInt", dwStackSize
+						, "UInt", lpStartAddress
+						, "UInt", lpParameter
+						, "UInt", dwCreationFlags
+						, "UInt", lpThreadId
+						, "UInt")
+	if(dwRet == 0) {
+		ErrorLEvel := ERROR_ALLOC_MEMORY
+		return 0
+	}
+	
+	ErrorLevel := ERROR_OK
+	return dwRet
+}
+
+waitForSingleObject(hThread, dwMilliseconds) {
+	if(!hThread) {
+		ErrorLevel := ERROR_INVALID_HANDLE
+		return 0
+	}
+	
+	dwRet := DllCall(	"WaitForSingleObject"
+						, "UInt", hThread
+						, "UInt", dwMilliseconds
+						, "UInt")
+	if(dwRet == 0xFFFFFFFF) {
+		ErrorLEvel := ERROR_WAIT_FOR_OBJECT
+		return 0
+	}
+	
+	ErrorLevel := ERROR_OK
+	return dwRet
+}
+
+__ansiToUnicode(sString, nLen = 0) {
+   If !nLen
+   {
+      nLen := DllCall("MultiByteToWideChar"
+      , "Uint", 0
+      , "Uint", 0
+      , "Uint", &sString
+      , "int",  -1
+      , "Uint", 0
+      , "int",  0)
+   }
+
+   VarSetCapacity(wString, nLen * 2)
+
+   DllCall("MultiByteToWideChar"
+      , "Uint", 0
+      , "Uint", 0
+      , "Uint", &sString
+      , "int",  -1
+      , "Uint", &wString
+      , "int",  nLen)
+	  
+	return wString
+}
+
+__unicodeToAnsi(wString, nLen = 0) {
+   pString := wString + 1 > 65536 ? wString : &wString
+
+   If !nLen
+   {
+      nLen := DllCall("WideCharToMultiByte"
+      , "Uint", 0
+      , "Uint", 0
+      , "Uint", pString
+      , "int",  -1
+      , "Uint", 0
+      , "int",  0
+      , "Uint", 0
+      , "Uint", 0)
+   }
+
+   VarSetCapacity(sString, nLen)
+
+   DllCall("WideCharToMultiByte"
+      , "Uint", 0
+      , "Uint", 0
+      , "Uint", pString
+      , "int",  -1
+      , "str",  sString
+      , "int",  nLen
+      , "Uint", 0
+      , "Uint", 0)
+	return sString
+}
+
+__toHex(dwIn, dwNewLen = 8) {
+	oldFormat := A_FormatInteger
+	if(dwIn >= 0) {
+		hexOut := dwIn
+	} else {
+		hexOut := 0xFFFFFFFF + dwIn + 0x1
+	}
+	SetFormat, Integer, H
+	hexOut += 0
+	hexOut := SubStr(hexOut, 3)
+	SetFormat, Integer, %oldFormat%
+	
+	while(StrLen(hexOut) < dwNewLen) {
+		hexOut := "0" . hexOut
+	}
+	
+	if(StrLen(hexOut) > dwNewLen)
+		hexOut := SubStr(hexOut, -dwNewLen + 1)
+	
+	return "0x" . hexOut
+}
+
+__toLittleEndian(hexIn) {
+	hexIn := SubStr(hexIn, 3)
+	dwInLen := StrLen(hexIn)
+	hexOut := ""
+	
+	if(Mod(dwInLen, 2) > 0) {
+		hexIn := "0" . hexIn
+		dwInLen += 1
+	}
+	
+	nBytes := (dwInLen / 2)
+	
+	i := 0
+	while(i < nBytes) {
+		hexOut := hexOut . SubStr(hexIn, -(i*2)-1, 2)
+		i += 1
+	}
+	
+	return "0x" . hexOut
+}
