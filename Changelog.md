@@ -1,3 +1,8 @@
+R8.2
+
+Zurück auf R6 aufgrund einiger unstimmigkeiten.
+Aber Das Angleichungsupdate sowie IsPlayerInRangeOfPoint bleibt erstmal soweit drinne :)
+
 R8.1
 
 IsPlayerInRangeOfPoint()
