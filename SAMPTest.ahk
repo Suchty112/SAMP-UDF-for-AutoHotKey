@@ -44,21 +44,3 @@ Numpad5::
 	; HP und Rüstung anzeigen
 	showGameText("~r~Health: ~g~" . getPlayerHealth() . "~w~~n~~r~Armor: ~g~" . getPlayerArmor() . "~w~", 10000, 4)
 	return
-	
-Numpad2::
-	SendInput tID:{Space}
-	Input varID, V I M,{enter}
-	SendInput {end}+{home}{Del}{esc}
-	updateScoreboardData()
-	showGameText(getPlayerNameById(varID) "~n~Score: " getPlayerScoreById(varID) "~n~Ping: " getPlayerPingById(varID), 1000, 0)
-	return
- 
- 
-Numpad1::
-	SendInput tID:{Space}
-	Input varName, V I M,{enter}
-	SendInput {end}+{home}{Del}{esc}
-	updateScoreboardData()
-	varID := getPlayerIdByName(varName)
-	showGameText(getPlayerNameById(varID) "~n~Score: " getPlayerScoreById(varID) "~n~Ping: " getPlayerPingById(varID), 1000, 0)
-	return
