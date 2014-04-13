@@ -21,26 +21,26 @@ Numpad5::
 	
 	; Text in den Chat schreiben ({FFFF00} = gelb, {FFAA00} = orange)
 	; Hallo <Username>.
-	addMessageToChatWindow("{FFFF00}Hallo {FFAA00}" . getUsername() . "{FFFF00}.")
+	addChatMessage("{FFFF00}Hallo {FFAA00}" . getUsername() . "{FFFF00}.")
 	; Du bist momentan (nicht) in einem Dialog oder im Chat.
-	addMessageToChatWindow("{FFFF00}Du " . msg . " in einem Dialog oder im Chat.")
+	addChatMessage("{FFFF00}Du " . msg . " in einem Dialog oder im Chat.")
 	; Dein Fahrzeug hat <HP> HP und du befindest dich bei genau
-	addMessageToChatWindow("{FFFF00}Dein Fahrzeug hat {FFAA00}" . getVehicleHealth() . " HP{FFFF00} und befindest dich bei genau")
+	addChatMessage("{FFFF00}Dein Fahrzeug hat {FFAA00}" . GetVehicleHealth() . " HP{FFFF00} und befindest dich bei genau")
 	; (<X>|<Y>|<Z>), das liegt in <Position>.
-	addMessageToChatWindow("{FFAA00}(" . coords[1] . " | " . coords[2] . " | " . coords[3] . "){FFFF00}, das liegt in {FFAA00}" . position . "{FFFF00}.") ;
+	addChatMessage("{FFAA00}(" . coords[1] . " | " . coords[2] . " | " . coords[3] . "){FFFF00}, das liegt in {FFAA00}" . position . "{FFFF00}.") ;
 	
 	; Abstand im Chat erzeugen
-	addMessageToChatWindow(" ")
+	addChatMessage(" ")
 	
 	; Weiterhin kannst du ganz privat im lokalen Chatfenster schreiben,
-	addMessageToChatWindow("{FFFF00}Weiterhin kannst du ganz privat im lokalen Chatfenster schreiben,")
+	SendChat("{FFFF00}Weiterhin kannst du ganz privat im lokalen Chatfenster schreiben,")
 	
 	; Nachricht senden
 	sendChatMessage("mit anderen Chatten")
 	
 	; Befehl senden
-	sendChatMessage("/b und Befehle ausführen.")
+	SendChat("/b und Befehle ausführen.")
 	
 	; HP und Rüstung anzeigen
-	showGameText("~r~Health: ~g~" . getPlayerHealth() . "~w~~n~~r~Armor: ~g~" . getPlayerArmor() . "~w~", 10000, 4)
+	showGameText("~r~Health: ~g~" . GetPlayerHealth() . "~w~~n~~r~Armor: ~g~" . GetPlayerArmor() . "~w~", 10000, 4)
 	return
