@@ -36,7 +36,7 @@ Numpad5::
 	SendChat("{FFFF00}Weiterhin kannst du ganz privat im lokalen Chatfenster schreiben,")
 	
 	; Nachricht senden
-	sendChatMessage("mit anderen Chatten")
+	SendChat("mit anderen Chatten")
 	
 	; Befehl senden
 	SendChat("/b und Befehle ausführen.")
