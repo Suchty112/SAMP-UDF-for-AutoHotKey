@@ -1,3 +1,7 @@
+R8.3
+
+ANSI verfügbarkeit hinzugefügt, danke dafür an [Agrippa1994](https://github.com/agrippa1994)
+
 R8.2
 
 Zurück auf R6 aufgrund einiger unstimmigkeiten.
