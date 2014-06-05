@@ -1,4 +1,4 @@
-; #### SAMP UDF R8.2 ####
+; #### SAMP UDF R8.4 ####
 ; SAMP Version: 0.3z R1
 ; Written by Chuck_Floyd 
 ; https://github.com/FrozenBrain/SAMP-UDF-for-AutoHotKey
@@ -74,15 +74,16 @@ global bInitZaC						:= 0
 ; # Neue SAMP-Funktionen:												#
 ; # 	- playAudioStream(wUrl)				Spielt einen "Audio Stream" ab					#
 ; # 	- stopAudioStream()				Stoppt den aktuellen Audio Stream				#
-; #															#
-; # Noch nicht eingebaut												#
-; # 	- IsPlayerInAnyInterrior()											#
 ; # 	- getPlayerScoreById(dwId)			Zeigt den Score zu der Id					#
 ; # 	- getPlayerPingById(dwId)			Zeigt den Ping zu der Id					#
 ; # 	- getPlayerNameById(dwId)			Zeigt den Namen zu der Id					#
 ; # 	- getPlayerIdByName(wName)			Zeigt die Id zu dem Namen					#
-; # 	- updateScoreboardData()			Aktualisiert Scoreboard Inhalte	
-; #######################################################################################################################
+; # 	- updateScoreboardData()			Aktualisiert Scoreboard Inhalte					#
+; #															#
+; # Noch nicht eingebaut												#
+; # 	- IsPlayerInAnyInterrior()											#
+; # 	- 														#
+; ###################################################################################################################
 ; # Spielerfunktionen:													#			
 ; # 	- GetPlayerHealth()				Ermittelt die HP des Spielers					#
 ; #	- GetPlayerArmor()				Ermittelt den Rüstungswert des Spielers				#
@@ -302,6 +303,387 @@ unPatchRadio()
 	return true
 }
 
+updateScoreboardData() {
+	
+	if(!checkHandles())
+		return false
+	
+	dwAddress := readDWORD(hGTA, dwSAMP + 0x212A80)			;g_SAMP
+	if(ErrorLevel || dwAddress==0) {
+		ErrorLevel := ERROR_READ_MEMORY
+		return false
+	}
+	
+	dwFunc := dwSAMP + 0x7D10
+	
+	VarSetCapacity(injectData, 11, 0) ;mov + call + retn
+	
+	NumPut(0xB9, injectData, 0, "UChar")
+	NumPut(dwAddress, injectData, 1, "UInt")
+	
+	NumPut(0xE8, injectData, 5, "UChar")
+	offset := dwFunc - (pInjectFunc + 10)
+	NumPut(offset, injectData, 6, "Int")
+	NumPut(0xC3, injectData, 10, "UChar")
+	
+	writeRaw(hGTA, pInjectFunc, &injectData, 11)
+	if(ErrorLevel)
+		return false
+	
+	hThread := createRemoteThread(hGTA, 0, 0, pInjectFunc, 0, 0, 0)
+	if(ErrorLevel)
+		return false
+	
+	waitForSingleObject(hThread, 0xFFFFFFFF)
+	
+	return true
+	
+}
+
+getPlayerIdByName(wName) {
+	if(!checkHandles())
+		return -1
+		
+	if(StrLen(wName) < 3 || StrLen(wName) > 24)
+		return -1
+	
+	dwAddress := readDWORD(hGTA, dwSAMP + 0x212A80)			;g_SAMP
+	if(ErrorLevel || dwAddress==0) {
+		ErrorLevel := ERROR_READ_MEMORY
+		return -1
+	}
+	
+	dwAddress := readDWORD(hGTA, dwAddress + 0x3d9)		;pPools
+	if(ErrorLevel || dwAddress==0) {
+		ErrorLevel := ERROR_READ_MEMORY
+		return -1
+	}
+	
+	dwPlayers := readDWORD(hGTA, dwAddress + 0x14) 			;g_Players
+	if(ErrorLevel || dwPlayers==0) {
+		ErrorLevel := ERROR_READ_MEMORY
+		return -1
+	}
+	
+	;----------------
+	
+	
+	dwTemp := readDWORD(hGTA, dwPlayers + 26)	;local player strlen
+	if(ErrorLevel) {
+		ErrorLevel := ERROR_READ_MEMORY
+		return -1
+	}
+	
+	if(dwTemp <= 0xf) {
+		sUsername := readString(hGTA, dwPlayers + 10, 16)
+		if(ErrorLevel) {
+			ErrorLevel := ERROR_READ_MEMORY
+			return -1
+		}
+		if(sUsername == wName) {
+			;wTemp := readWORD(hGTA, dwPlayers + 4)	;localPlayerID
+			wTemp := readMem(hGTA, dwPlayers + 4, 2, "Short")	;localPlayerID
+			if(ErrorLevel) {
+				ErrorLevel := ERROR_READ_MEMORY
+				return -1
+			}
+			ErrorLevel := ERROR_OK
+			return wTemp
+		}
+	}
+	else {
+	
+		dwAddress := readDWORD(hGTA, dwPlayers + 10)
+		if(ErrorLevel) {
+			ErrorLevel := ERROR_READ_MEMORY
+			return -1
+		}
+		sUsername := readString(hGTA, dwAddress, 25)
+		if(ErrorLevel) {
+			ErrorLevel := ERROR_READ_MEMORY
+			return -1
+		}
+		if(sUsername == wName) {
+			;wTemp := readWORD(hGTA, dwPlayers + 4)	;localPlayerID
+			wTemp := readMem(hGTA, dwPlayers + 4, 2, "Short")	;localPlayerID
+			if(ErrorLevel) {
+				ErrorLevel := ERROR_READ_MEMORY
+				return -1
+			}
+			ErrorLevel := ERROR_OK
+			return wTemp
+		}
+	}
+	
+	;-----
+		
+	Loop, 1004
+	{
+		i := A_Index-1
+		
+		dwRemoteplayer := readDWORD(hGTA, dwPlayers+0x2e+i*4)      ;pRemoteplayer
+		if(ErrorLevel) {
+			ErrorLevel := ERROR_READ_MEMORY
+			return -1
+		}
+		if(dwRemoteplayer==0)
+			continue
+			
+		dwTemp := readDWORD(hGTA, dwRemoteplayer + 36)		;iStrlenName__
+		if(ErrorLevel) {
+			ErrorLevel := ERROR_READ_MEMORY
+			return -1
+		}
+		if(dwTemp <= 0xf)
+		{
+			sUsername := readString(hGTA, dwRemoteplayer+0x14, 16)
+			if(ErrorLevel) {
+				ErrorLevel := ERROR_READ_MEMORY
+				return -1
+			}
+			if(sUsername == wName) {
+				ErrorLevel := ERROR_OK
+				return i
+			}
+		}
+		else {
+			dwAddress := readDWORD(hGTA, dwRemoteplayer + 0x14)
+			if(ErrorLevel || dwAddress==0) {
+				ErrorLevel := ERROR_READ_MEMORY
+				return -1
+			}
+			sUsername := readString(hGTA, dwAddress, 25)
+			if(ErrorLevel) {
+				ErrorLevel := ERROR_READ_MEMORY
+				return -1
+			}
+			if(sUsername == wName) {
+				ErrorLevel := ERROR_OK
+				return i
+			}
+		}
+	}
+	
+	
+	;----------------
+	ErrorLevel := ERROR_OK
+	return -1
+}
+
+getPlayerNameById(dwId) {
+	if(!checkHandles())
+		return ""
+		
+	if(dwId < 0 || dwId > 1004)
+		return ""
+	
+	dwAddress := readDWORD(hGTA, dwSAMP + 0x212A80)			;g_SAMP
+	if(ErrorLevel || dwAddress==0) {
+		ErrorLevel := ERROR_READ_MEMORY
+		return ""
+	}
+	
+	dwAddress := readDWORD(hGTA, dwAddress + 0x3d9)		;pPools
+	if(ErrorLevel || dwAddress==0) {
+		ErrorLevel := ERROR_READ_MEMORY
+		return ""
+	}
+	
+	dwPlayers := readDWORD(hGTA, dwAddress + 0x14) 			;g_Players
+	if(ErrorLevel || dwPlayers==0) {
+		ErrorLevel := ERROR_READ_MEMORY
+		return ""
+	}
+	
+	;wTemp := readWORD(hGTA, dwPlayers + 4)	;localPlayerID
+	wTemp := readMem(hGTA, dwPlayers + 4, 2, "Short")	;localPlayerID
+	if(ErrorLevel) {
+		ErrorLevel := ERROR_READ_MEMORY
+		return ""
+	}
+	if(wTemp == dwId) {
+		dwTemp2 := readDWORD(hGTA, dwPlayers + 26)
+		if(ErrorLevel) {
+			ErrorLevel := ERROR_READ_MEMORY
+			return ""
+		}
+		if(dwTemp2 <= 0xf) {
+			sUsername := readString(hGTA, dwPlayers + 10, 16)
+			if(ErrorLevel) {
+				ErrorLevel := ERROR_READ_MEMORY
+				return ""
+			}
+			ErrorLevel := ERROR_OK
+			return sUsername
+		}
+		dwAddress := readDWORD(hGTA, dwPlayers + 10)
+		if(ErrorLevel) {
+			ErrorLevel := ERROR_READ_MEMORY
+			return ""
+		}
+		sUsername := readString(hGTA, dwAddress, 25)
+		if(ErrorLevel) {
+			ErrorLevel := ERROR_READ_MEMORY
+			return ""
+		}
+		ErrorLevel := ERROR_OK
+		return sUsername
+	}
+	
+	dwRemoteplayer := readDWORD(hGTA, dwPlayers+0x2e+dwId*4)      ;pRemoteplayer
+	if(ErrorLevel || dwRemoteplayer==0) {
+		ErrorLevel := ERROR_READ_MEMORY
+		return ""
+	}
+	
+	dwTemp := readDWORD(hGTA, dwRemoteplayer + 36)		;iStrlenName__
+	if(ErrorLevel) {
+		ErrorLevel := ERROR_READ_MEMORY
+		return ""
+	}
+	if(dwTemp <= 0xf)
+	{
+		sUsername := readString(hGTA, dwRemoteplayer+0x14, 16)
+		if(ErrorLevel) {
+			ErrorLevel := ERROR_READ_MEMORY
+			return ""
+		}
+		ErrorLevel := ERROR_OK
+		return sUsername
+	}
+	
+	dwAddress := readDWORD(hGTA, dwRemoteplayer + 0x14)
+	if(ErrorLevel || dwAddress==0) {
+		ErrorLevel := ERROR_READ_MEMORY
+		return ""
+	}
+	
+	sUsername := readString(hGTA, dwAddress, 25)
+	if(ErrorLevel) {
+		ErrorLevel := ERROR_READ_MEMORY
+		return ""
+	}
+	ErrorLevel := ERROR_OK
+	return sUsername
+}
+
+getPlayerPingById(dwId) {
+	if(!checkHandles())
+		return -1
+		
+	if(dwId < 0 || dwId > 1004)
+		return -1
+	
+	dwAddress := readDWORD(hGTA, dwSAMP + 0x212A80)			;g_SAMP
+	if(ErrorLevel || dwAddress==0) {
+		ErrorLevel := ERROR_READ_MEMORY
+		return -1
+	}
+	
+	dwAddress := readDWORD(hGTA, dwAddress + 0x3d9)		;pPools
+	if(ErrorLevel || dwAddress==0) {
+		ErrorLevel := ERROR_READ_MEMORY
+		return -1
+	}
+	
+	dwPlayers := readDWORD(hGTA, dwAddress + 0x14) 			;g_Players
+	if(ErrorLevel || dwPlayers==0) {
+		ErrorLevel := ERROR_READ_MEMORY
+		return -1
+	}
+	
+	;wTemp := readWORD(hGTA, dwPlayers + 4)	;localPlayerID
+	wTemp := readMem(hGTA, dwPlayers + 4, 2, "Short")	;localPlayerID
+	if(ErrorLevel) {
+		ErrorLevel := ERROR_READ_MEMORY
+		return -1
+	}
+	
+	if(wTemp == dwId) {
+		;dwTemp := readDWORD(hGTA, dwPlayers + 0x26)
+		dwTemp := readMem(hGTA, dwPlayers + 0x26, 4, "Int")
+		if(ErrorLevel) {
+			ErrorLevel := ERROR_READ_MEMORY
+			return -1
+		}
+		ErrorLevel := ERROR_OK
+		return dwTemp
+	}
+	
+	dwRemoteplayer := readDWORD(hGTA, dwPlayers+0x2e+dwId*4)      ;pRemoteplayer
+	if(ErrorLevel || dwRemoteplayer==0) {
+		ErrorLevel := ERROR_READ_MEMORY
+		return -1
+	}
+	
+	;dwTemp := readDWORD(hGTA, dwRemoteplayer + 12)
+	dwTemp := readMem(hGTA, dwRemoteplayer + 12, 4, "Int")
+	if(ErrorLevel) {
+		ErrorLevel := ERROR_READ_MEMORY
+		return -1
+	}
+	ErrorLevel := ERROR_OK
+	return dwTemp
+}
+
+getPlayerScoreById(dwId) {
+	if(!checkHandles())
+		return ""
+		
+	if(dwId < 0 || dwId > 1004)
+		return ""
+	
+	dwAddress := readDWORD(hGTA, dwSAMP + 0x212A80)			;g_SAMP
+	if(ErrorLevel || dwAddress==0) {
+		ErrorLevel := ERROR_READ_MEMORY
+		return ""
+	}
+	
+	dwAddress := readDWORD(hGTA, dwAddress + 0x3d9)		;pPools
+	if(ErrorLevel || dwAddress==0) {
+		ErrorLevel := ERROR_READ_MEMORY
+		return ""
+	}
+	
+	dwPlayers := readDWORD(hGTA, dwAddress + 0x14) 			;g_Players
+	if(ErrorLevel || dwPlayers==0) {
+		ErrorLevel := ERROR_READ_MEMORY
+		return ""
+	}
+	
+	;wTemp := readWORD(hGTA, dwPlayers + 4)	;localPlayerID
+	wTemp := readMem(hGTA, dwPlayers + 4, 2, "Short")	;localPlayerID
+	if(ErrorLevel) {
+		ErrorLevel := ERROR_READ_MEMORY
+		return ""
+	}
+	
+	if(wTemp == dwId) {
+		;dwTemp := readDWORD(hGTA, dwPlayers + 0x2a)
+		dwTemp := readMem(hGTA, dwPlayers + 0x2a, 4, "Int")
+		if(ErrorLevel) {
+			ErrorLevel := ERROR_READ_MEMORY
+			return ""
+		}
+		ErrorLevel := ERROR_OK
+		return dwTemp
+	}
+	
+	dwRemoteplayer := readDWORD(hGTA, dwPlayers+0x2e+dwId*4)      ;pRemoteplayer
+	if(ErrorLevel || dwRemoteplayer==0) {
+		ErrorLevel := ERROR_READ_MEMORY
+		return ""
+	}
+	
+	;dwTemp := readDWORD(hGTA, dwRemoteplayer + 4)
+	dwTemp := readMem(hGTA, dwRemoteplayer + 4, 4, "Int")
+	if(ErrorLevel) {
+		ErrorLevel := ERROR_READ_MEMORY
+		return ""
+	}
+	ErrorLevel := ERROR_OK
+	return dwTemp
+}
 
 ; ##### Spielerfunktionen #####
 GetPlayerHealth() {
