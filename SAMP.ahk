@@ -1,4 +1,4 @@
-; #### SAMP UDF R8.2 ####
+; #### SAMP UDF R8.4 ####
 ; SAMP Version: 0.3z R1
 ; Written by Chuck_Floyd 
 ; https://github.com/FrozenBrain/SAMP-UDF-for-AutoHotKey
@@ -64,244 +64,617 @@ global nCity						:= 1
 global bInitZaC						:= 0
 
 ; ###################################################################################################################
-; # SAMP-Funktionen:													#
-; # 	- isInChat()					Prüft, ob der Spieler gerade chattet oder in einem Dialog ist	#
-; #	- getUsername()					Liest den Namen des Spielers aus				#
-; #	- SendChat(wText)				Sendet eine Nachricht od. einen Befehl direkt an den Server	#
-; #	- addChatMessage(wText)				Fügt eine Zeile in den Chat ein (nur für den Spieler sichtbar)	#
-; # 	- showGameText(wText, dwTime, dwTextsize)	Zeigt einen Text inmitten des Bildschirmes an			#
-; ##################################################################################################################	 
-; # Neue SAMP-Funktionen:												#
-; # 	- playAudioStream(wUrl)				Spielt einen "Audio Stream" ab					#
-; # 	- stopAudioStream()				Stoppt den aktuellen Audio Stream				#
-; #															#
-; # Noch nicht eingebaut												#
-; # 	- IsPlayerInAnyInterrior()											#
-; # 	- getPlayerScoreById(dwId)			Zeigt den Score zu der Id					#
-; # 	- getPlayerPingById(dwId)			Zeigt den Ping zu der Id					#
-; # 	- getPlayerNameById(dwId)			Zeigt den Namen zu der Id					#
-; # 	- getPlayerIdByName(wName)			Zeigt die Id zu dem Namen					#
-; # 	- updateScoreboardData()			Aktualisiert Scoreboard Inhalte	
-; #######################################################################################################################
-; # Spielerfunktionen:													#			
-; # 	- GetPlayerHealth()				Ermittelt die HP des Spielers					#
-; #	- GetPlayerArmor()				Ermittelt den Rüstungswert des Spielers				#
+; # SAMP-Funktionen: #
+; # - isInChat() Prüft, ob der Spieler gerade chattet oder in einem Dialog ist #
+; # - getUsername() Liest den Namen des Spielers aus #
+; # - SendChat(wText) Sendet eine Nachricht od. einen Befehl direkt an den Server #
+; # - addChatMessage(wText) Fügt eine Zeile in den Chat ein (nur für den Spieler sichtbar) #
+; # - showGameText(wText, dwTime, dwTextsize) Zeigt einen Text inmitten des Bildschirmes an #
+; ##################################################################################################################
+; # Neue SAMP-Funktionen: #
+; # - playAudioStream(wUrl) Spielt einen "Audio Stream" ab #
+; # - stopAudioStream() Stoppt den aktuellen Audio Stream #
+; # - getPlayerScoreById(dwId) Zeigt den Score zu der Id #
+; # - getPlayerPingById(dwId) Zeigt den Ping zu der Id #
+; # - getPlayerNameById(dwId) Zeigt den Namen zu der Id #
+; # - getPlayerIdByName(wName) Zeigt die Id zu dem Namen #
+; # - updateScoreboardData() Aktualisiert Scoreboard Inhalte #
+; # #
+; # Noch nicht eingebaut #
+; # - IsPlayerInAnyInterrior() #
+; # - #
 ; ###################################################################################################################
-; # Fahrzeugfunktionen:													#	
-; #	- GetVehicleHealth()				Ermittelt die HP des Fahrzeugs, in dem der Spieler sitzt	#
-; #															#
-; # Noch nicht eingebaut												#
-; # 	- IsPlayerInAnyVehicle()											#
-; # 	- GetVehicleEngineState()											#
-; # 	- GetVehicleID()												#
-; # 	- GetVehicleLockState()												#
-; # 	- GetVehicleLightState()											#
-; # 	- IsPlayerDriver()												#
-; # 	- GetVehicleSeatState												#
+; # Spielerfunktionen: #
+; # - GetPlayerHealth() Ermittelt die HP des Spielers #
+; # - GetPlayerArmor() Ermittelt den Rüstungswert des Spielers #
 ; ###################################################################################################################
-; # Standpunktbestimmung:												#					
-; # 	- getCoordinates()				Ermittelt die aktuelle Position (Koordinaten)			#
-; #	- GetPlayerPos(X,Y,Z)				siehe oben drüber						#
-; # --------------------------------------------------------------------------------------------------------------- 	#
-; # 	- initZonesAndCities()				Initialisiert eine Liste aller Standartgebiete			#
-; # 	(Voraussetzung für die folgenden Funktionen dieser Kategorie)							#
-; # 	- calculateZone(X, Y, Z)			Bestimmt die Zone (= Stadtteil) aus den geg. Koordinaten	#
-; # 	- calculateCity(X, Y, Z)			Bestimmt die Stadt aus den geg. Koordinaten			#
-; # 	- getCurrentZonecode()				Ermittelt die aktulle Zone in Kurzform				#
-; # 	- AddZone(Name, X1, Y1, Z1, X2, Y2, Z2)		Fügt eine Zone zum Index hinzu					#
-; # 	- AddCity(Name, X1, Y1, Z1, X2, Y2, Z2)		Fügt eine Stadt zum Index hinzu					#
-; #	- IsPlayerInRangeOfPoint(X, Y, Z, Radius)	Bestimmt ob der Spieler in der Nähe der Koordinaten ist		#
-; #	- IsIsPlayerInRangeOfPoint2D(X, Y, Radius)	Bestimmt ob der Spieler in der Nähe der Koordinaten ist		#
+; # Fahrzeugfunktionen: #
+; # - GetVehicleHealth() Ermittelt die HP des Fahrzeugs, in dem der Spieler sitzt #
+; # #
+; # Noch nicht eingebaut #
+; # - IsPlayerInAnyVehicle() #
+; # - GetVehicleEngineState() #
+; # - GetVehicleID() #
+; # - GetVehicleLockState() #
+; # - GetVehicleLightState() #
+; # - IsPlayerDriver() #
+; # - GetVehicleSeatState #
 ; ###################################################################################################################
-; # Sonstiges:														#											
-; #	- checkHandles()												#											
+; # Standpunktbestimmung: #
+; # - getCoordinates() Ermittelt die aktuelle Position (Koordinaten) #
+; # - GetPlayerPos(X,Y,Z) siehe oben drüber #
+; # --------------------------------------------------------------------------------------------------------------- #
+; # - initZonesAndCities() Initialisiert eine Liste aller Standartgebiete #
+; # (Voraussetzung für die folgenden Funktionen dieser Kategorie) #
+; # - calculateZone(X, Y, Z) Bestimmt die Zone (= Stadtteil) aus den geg. Koordinaten #
+; # - calculateCity(X, Y, Z) Bestimmt die Stadt aus den geg. Koordinaten #
+; # - getCurrentZonecode() Ermittelt die aktulle Zone in Kurzform #
+; # - AddZone(Name, X1, Y1, Z1, X2, Y2, Z2) Fügt eine Zone zum Index hinzu #
+; # - AddCity(Name, X1, Y1, Z1, X2, Y2, Z2) Fügt eine Stadt zum Index hinzu #
+; # - IsPlayerInRangeOfPoint(X, Y, Z, Radius) Bestimmt ob der Spieler in der Nähe der Koordinaten ist #
+; # - IsIsPlayerInRangeOfPoint2D(X, Y, Radius) Bestimmt ob der Spieler in der Nähe der Koordinaten ist #
 ; ###################################################################################################################
-; # Speicherfunktionen (intern genutzt):										#
-; # 	- getPID(sProcess)												#
-; # 	- openProcess(dwPID, dwRights)											#
-; # 	- closeProcess(hProcess)											#
-; # 	- getModuleBaseAddress(sModule, dwPID)										#
-; #		- readString(hProcess, dwAddress, dwLen)								#
-; #		- readFloat(hProcess, dwAddress)									#
-; #		- readDWORD(hProcess, dwAddress)									#
-; #		- readRaw(hProcess, dwAddress, dwLen)									#
-; #		- writeString(hProcess, dwAddress, wString)								#
-; #		- writeRaw(hProcess, dwAddress, data, dwLen)								#
-; #		- virtualAllocEx(hProcess, dwSize, flAllocationType, flProtect)						#
-; #		- virtualFreeEx(hProcess, lpAddress, dwSize, dwFreeType)						#
-; #		- createRemoteThread(hProcess, lpThreadAttributes, dwStackSize, lpStartAddress, lpParameter,		#
-; #							 dwCreationFlags, lpThreadId)					#
-; #		- waitForSingleObject(hThread, dwMilliseconds)								#
-; #		- __ansiToUnicode(sString, nLen = 0)									#
-; #		- __unicodeToAnsi(wString, nLen = 0)									#
-; #		- __toHex(iIn)												#
-; #		- __toLittleEndian(hexIn)										#
+; # Sonstiges: #
+; # - checkHandles() #
+; ###################################################################################################################
+; # Speicherfunktionen (intern genutzt): #
+; # - getPID(sProcess) #
+; # - openProcess(dwPID, dwRights) #
+; # - closeProcess(hProcess) #
+; # - getModuleBaseAddress(sModule, dwPID) #
+; # - readString(hProcess, dwAddress, dwLen) #
+; # - readFloat(hProcess, dwAddress) #
+; # - readDWORD(hProcess, dwAddress) #
+; # - readRaw(hProcess, dwAddress, dwLen) #
+; # - writeString(hProcess, dwAddress, wString) #
+; # - writeRaw(hProcess, dwAddress, data, dwLen) #
+; # - virtualAllocEx(hProcess, dwSize, flAllocationType, flProtect) #
+; # - virtualFreeEx(hProcess, lpAddress, dwSize, dwFreeType) #
+; # - createRemoteThread(hProcess, lpThreadAttributes, dwStackSize, lpStartAddress, lpParameter, #
+; # dwCreationFlags, lpThreadId) #
+; # - waitForSingleObject(hThread, dwMilliseconds) #
+; # - __ansiToUnicode(sString, nLen = 0) #
+; # - __unicodeToAnsi(wString, nLen = 0) #
+; # - __toHex(iIn) #
+; # - __toLittleEndian(hexIn) #
 ; ###################################################################################################################
 
 ; ##### SAMP-Funktionen #####
 
 
 isInChat() {
-	if(!checkHandles())
-		return false
-	
-	dwPtr := dwSAMP + ADDR_SAMP_INCHAT_PTR
-	dwAddress := readDWORD(hGTA, dwPtr) + ADDR_SAMP_INCHAT_PTR_OFF
-	if(ErrorLevel) {
-		ErrorLevel := ERROR_READ_MEMORY
-		return false
-	}
-	
-	dwInChat := readDWORD(hGTA, dwAddress)
-	if(ErrorLevel) {
-		ErrorLevel := ERROR_READ_MEMORY
-		return false
-	}
-	
-	ErrorLevel := ERROR_OK
-	if(dwInChat > 0) {
-		return true
-	} else {
-		return false
-	}
+if(!checkHandles())
+return false
+
+dwPtr := dwSAMP + ADDR_SAMP_INCHAT_PTR
+dwAddress := readDWORD(hGTA, dwPtr) + ADDR_SAMP_INCHAT_PTR_OFF
+if(ErrorLevel) {
+ErrorLevel := ERROR_READ_MEMORY
+return false
+}
+
+dwInChat := readDWORD(hGTA, dwAddress)
+if(ErrorLevel) {
+ErrorLevel := ERROR_READ_MEMORY
+return false
+}
+
+ErrorLevel := ERROR_OK
+if(dwInChat > 0) {
+return true
+} else {
+return false
+}
 }
 
 getUsername() {
-	if(!checkHandles())
-		return "Unbekannt"
-	
-	dwAddress := dwSAMP + ADDR_SAMP_USERNAME
-	sUsername := readString(hGTA, dwAddress, 20)
-	if(ErrorLevel) {
-		ErrorLevel := ERROR_READ_MEMORY
-		return "Unbekannt"
-	}
-	
-	ErrorLevel := ERROR_OK
-	return sUsername
+if(!checkHandles())
+return "Unbekannt"
+
+dwAddress := dwSAMP + ADDR_SAMP_USERNAME
+sUsername := readString(hGTA, dwAddress, 20)
+if(ErrorLevel) {
+ErrorLevel := ERROR_READ_MEMORY
+return "Unbekannt"
+}
+
+ErrorLevel := ERROR_OK
+return sUsername
 }
 
 SendChat(wText) {
-	if(!checkHandles())
-		return false
-	
-	if(SubStr(wText, 1, 1) == "/") {
-		dwFunc := dwSAMP + FUNC_SAMP_SENDCMD
-	} else {
-		dwFunc := dwSAMP + FUNC_SAMP_SENDSAY
-	}
-	
-	callWithParams(hGTA, dwFunc, [["s", wText]], false)
-	
-	ErrorLevel := ERROR_OK
-	return true
+if(!checkHandles())
+return false
+
+if(SubStr(wText, 1, 1) == "/") {
+dwFunc := dwSAMP + FUNC_SAMP_SENDCMD
+} else {
+dwFunc := dwSAMP + FUNC_SAMP_SENDSAY
+}
+
+callWithParams(hGTA, dwFunc, [["s", wText]], false)
+
+ErrorLevel := ERROR_OK
+return true
 }
 
 addChatMessage(wText) {
-	if(!checkHandles())
-		return false
-	
-	dwFunc := dwSAMP + FUNC_SAMP_ADDTOCHATWND
-	dwChatInfo := readDWORD(hGTA, dwSAMP + ADDR_SAMP_CHATMSG_PTR)
-	if(ErrorLevel) {
-		ErrorLevel := ERROR_READ_MEMORY
-		return false
-	}
-	
-	callWithParams(hGTA, dwFunc, [["p", dwChatInfo], ["s", wText]], true)
-	
-	ErrorLevel := ERROR_OK
-	return true
+if(!checkHandles())
+return false
+
+dwFunc := dwSAMP + FUNC_SAMP_ADDTOCHATWND
+dwChatInfo := readDWORD(hGTA, dwSAMP + ADDR_SAMP_CHATMSG_PTR)
+if(ErrorLevel) {
+ErrorLevel := ERROR_READ_MEMORY
+return false
+}
+
+callWithParams(hGTA, dwFunc, [["p", dwChatInfo], ["s", wText]], true)
+
+ErrorLevel := ERROR_OK
+return true
 }
 
 showGameText(wText, dwTime, dwSize) {
-	if(!checkHandles())
-		return false
-	
-	dwFunc := dwSAMP + FUNC_SAMP_SHOWGAMETEXT
-	
-	callWithParams(hGTA, dwFunc, [["s", wText], ["i", dwTime], ["i", dwSize]], false)
-	
-	ErrorLevel := ERROR_OK
-	return true
+if(!checkHandles())
+return false
+
+dwFunc := dwSAMP + FUNC_SAMP_SHOWGAMETEXT
+
+callWithParams(hGTA, dwFunc, [["s", wText], ["i", dwTime], ["i", dwSize]], false)
+
+ErrorLevel := ERROR_OK
+return true
 }
 
 playAudioStream(wUrl) {
-	if(!checkHandles())
-		return false
-	
-	dwFunc := dwSAMP + FUNC_SAMP_PLAYAUDIOSTR
-	
-	patchRadio()
-	
-	callWithParams(hGTA, dwFunc, [["s", wUrl], ["i", 0], ["i", 0], ["i", 0], ["i", 0], ["i", 0]], false)
-	
-	unPatchRadio()
-	
-	ErrorLevel := ERROR_OK
-	return true
+if(!checkHandles())
+return false
+
+dwFunc := dwSAMP + FUNC_SAMP_PLAYAUDIOSTR
+
+patchRadio()
+
+callWithParams(hGTA, dwFunc, [["s", wUrl], ["i", 0], ["i", 0], ["i", 0], ["i", 0], ["i", 0]], false)
+
+unPatchRadio()
+
+ErrorLevel := ERROR_OK
+return true
 }
 
 stopAudioStream() {
-	if(!checkHandles())
-		return false
-	
-	dwFunc := dwSAMP + FUNC_SAMP_STOPAUDIOSTR
-	
-	patchRadio()
-	
-	callWithParams(hGTA, dwFunc, [["i", 1]], false)
-	
-	unPatchRadio()
-	
-	ErrorLevel := ERROR_OK
-	return true
+if(!checkHandles())
+return false
+
+dwFunc := dwSAMP + FUNC_SAMP_STOPAUDIOSTR
+
+patchRadio()
+
+callWithParams(hGTA, dwFunc, [["i", 1]], false)
+
+unPatchRadio()
+
+ErrorLevel := ERROR_OK
+return true
 }
 
 patchRadio()
 {
-	if(!checkHandles())
-		return false
-	
-	nop1 := 0x90909090
-	nop2 := 0x90
-	NumPut(nop1,nop1,0,"UInt")
-	NumPut(nop2,nop2,0,"UChar")
-	
-	dwFunc := dwSAMP + FUNC_SAMP_PLAYAUDIOSTR
-	writeRaw(hGTA, dwFunc, &nop1, 4)
-	writeRaw(hGTA, dwFunc+4, &nop2, 1)
-	
-	dwFunc := dwSAMP + FUNC_SAMP_STOPAUDIOSTR
-	writeRaw(hGTA, dwFunc, &nop1, 4)
-	writeRaw(hGTA, dwFunc+4, &nop2, 1)
-	return true
+if(!checkHandles())
+return false
+
+nop1 := 0x90909090
+nop2 := 0x90
+NumPut(nop1,nop1,0,"UInt")
+NumPut(nop2,nop2,0,"UChar")
+
+dwFunc := dwSAMP + FUNC_SAMP_PLAYAUDIOSTR
+writeRaw(hGTA, dwFunc, &nop1, 4)
+writeRaw(hGTA, dwFunc+4, &nop2, 1)
+
+dwFunc := dwSAMP + FUNC_SAMP_STOPAUDIOSTR
+writeRaw(hGTA, dwFunc, &nop1, 4)
+writeRaw(hGTA, dwFunc+4, &nop2, 1)
+return true
 }
 
 unPatchRadio()
 {
-	if(!checkHandles())
-		return false
-	
-	old1 := 0x74003980
-	old2 := 0x39
-	
-	NumPut(old1,old1,0,"UInt")
-	NumPut(old2,old2,0,"UChar")
-	
-	dwFunc := dwSAMP + FUNC_SAMP_PLAYAUDIOSTR
-	writeRaw(hGTA, dwFunc, &old1, 4)
-	writeRaw(hGTA, dwFunc+4, &old2, 1)
-	
-	old2 := 0x09
-	NumPut(old2,old2,0,"UChar")
-	
-	dwFunc := dwSAMP + FUNC_SAMP_STOPAUDIOSTR
-	writeRaw(hGTA, dwFunc, &old1, 4)
-	writeRaw(hGTA, dwFunc+4, &old2, 1)
-	return true
+if(!checkHandles())
+return false
+
+old1 := 0x74003980
+old2 := 0x39
+
+NumPut(old1,old1,0,"UInt")
+NumPut(old2,old2,0,"UChar")
+
+dwFunc := dwSAMP + FUNC_SAMP_PLAYAUDIOSTR
+writeRaw(hGTA, dwFunc, &old1, 4)
+writeRaw(hGTA, dwFunc+4, &old2, 1)
+
+old2 := 0x09
+NumPut(old2,old2,0,"UChar")
+
+dwFunc := dwSAMP + FUNC_SAMP_STOPAUDIOSTR
+writeRaw(hGTA, dwFunc, &old1, 4)
+writeRaw(hGTA, dwFunc+4, &old2, 1)
+return true
 }
 
+updateScoreboardData() {
+
+if(!checkHandles())
+return false
+
+dwAddress := readDWORD(hGTA, dwSAMP + 0x212A80)	;g_SAMP
+if(ErrorLevel || dwAddress==0) {
+ErrorLevel := ERROR_READ_MEMORY
+return false
+}
+
+dwFunc := dwSAMP + 0x7D10
+
+VarSetCapacity(injectData, 11, 0) ;mov + call + retn
+
+NumPut(0xB9, injectData, 0, "UChar")
+NumPut(dwAddress, injectData, 1, "UInt")
+
+NumPut(0xE8, injectData, 5, "UChar")
+offset := dwFunc - (pInjectFunc + 10)
+NumPut(offset, injectData, 6, "Int")
+NumPut(0xC3, injectData, 10, "UChar")
+
+writeRaw(hGTA, pInjectFunc, &injectData, 11)
+if(ErrorLevel)
+return false
+
+hThread := createRemoteThread(hGTA, 0, 0, pInjectFunc, 0, 0, 0)
+if(ErrorLevel)
+return false
+
+waitForSingleObject(hThread, 0xFFFFFFFF)
+
+return true
+
+}
+
+getPlayerIdByName(wName) {
+if(!checkHandles())
+return -1
+
+if(StrLen(wName) < 3 || StrLen(wName) > 24)
+return -1
+
+dwAddress := readDWORD(hGTA, dwSAMP + 0x212A80)	;g_SAMP
+if(ErrorLevel || dwAddress==0) {
+ErrorLevel := ERROR_READ_MEMORY
+return -1
+}
+
+dwAddress := readDWORD(hGTA, dwAddress + 0x3d9)	;pPools
+if(ErrorLevel || dwAddress==0) {
+ErrorLevel := ERROR_READ_MEMORY
+return -1
+}
+
+dwPlayers := readDWORD(hGTA, dwAddress + 0x14) ;g_Players
+if(ErrorLevel || dwPlayers==0) {
+ErrorLevel := ERROR_READ_MEMORY
+return -1
+}
+;----------------
+
+
+dwTemp := readDWORD(hGTA, dwPlayers + 26)	;local player strlen
+if(ErrorLevel) {
+ErrorLevel := ERROR_READ_MEMORY
+return -1
+}
+
+if(dwTemp <= 0xf) {
+sUsername := readString(hGTA, dwPlayers + 10, 16)
+if(ErrorLevel) {
+ErrorLevel := ERROR_READ_MEMORY
+return -1
+}
+if(sUsername == wName) {
+;wTemp := readWORD(hGTA, dwPlayers + 4) ;localPlayerID
+wTemp := readMem(hGTA, dwPlayers + 4, 2, "Short")	;localPlayerID
+if(ErrorLevel) {
+ErrorLevel := ERROR_READ_MEMORY
+return -1
+}
+ErrorLevel := ERROR_OK
+return wTemp
+}
+}
+else {
+
+dwAddress := readDWORD(hGTA, dwPlayers + 10)
+if(ErrorLevel) {
+ErrorLevel := ERROR_READ_MEMORY
+return -1
+}
+sUsername := readString(hGTA, dwAddress, 25)
+if(ErrorLevel) {
+ErrorLevel := ERROR_READ_MEMORY
+return -1
+}
+if(sUsername == wName) {
+;wTemp := readWORD(hGTA, dwPlayers + 4) ;localPlayerID
+wTemp := readMem(hGTA, dwPlayers + 4, 2, "Short")	;localPlayerID
+if(ErrorLevel) {
+ErrorLevel := ERROR_READ_MEMORY
+return -1
+}
+ErrorLevel := ERROR_OK
+return wTemp
+}
+}
+;-----
+
+Loop, 1004
+{
+i := A_Index-1
+
+dwRemoteplayer := readDWORD(hGTA, dwPlayers+0x2e+i*4) ;pRemoteplayer
+if(ErrorLevel) {
+ErrorLevel := ERROR_READ_MEMORY
+return -1
+}
+if(dwRemoteplayer==0)
+continue
+
+dwTemp := readDWORD(hGTA, dwRemoteplayer + 36)	;iStrlenName__
+if(ErrorLevel) {
+ErrorLevel := ERROR_READ_MEMORY
+return -1
+}
+if(dwTemp <= 0xf)
+{
+sUsername := readString(hGTA, dwRemoteplayer+0x14, 16)
+if(ErrorLevel) {
+ErrorLevel := ERROR_READ_MEMORY
+return -1
+}
+if(sUsername == wName) {
+ErrorLevel := ERROR_OK
+return i
+}
+}
+else {
+dwAddress := readDWORD(hGTA, dwRemoteplayer + 0x14)
+if(ErrorLevel || dwAddress==0) {
+ErrorLevel := ERROR_READ_MEMORY
+return -1
+}
+sUsername := readString(hGTA, dwAddress, 25)
+if(ErrorLevel) {
+ErrorLevel := ERROR_READ_MEMORY
+return -1
+}
+if(sUsername == wName) {
+ErrorLevel := ERROR_OK
+return i
+}
+}
+}
+;----------------
+ErrorLevel := ERROR_OK
+return -1
+}
+
+getPlayerNameById(dwId) {
+if(!checkHandles())
+return ""
+
+if(dwId < 0 || dwId > 1004)
+return ""
+
+dwAddress := readDWORD(hGTA, dwSAMP + 0x212A80)	;g_SAMP
+if(ErrorLevel || dwAddress==0) {
+ErrorLevel := ERROR_READ_MEMORY
+return ""
+}
+
+dwAddress := readDWORD(hGTA, dwAddress + 0x3d9)	;pPools
+if(ErrorLevel || dwAddress==0) {
+ErrorLevel := ERROR_READ_MEMORY
+return ""
+}
+
+dwPlayers := readDWORD(hGTA, dwAddress + 0x14) ;g_Players
+if(ErrorLevel || dwPlayers==0) {
+ErrorLevel := ERROR_READ_MEMORY
+return ""
+}
+;wTemp := readWORD(hGTA, dwPlayers + 4) ;localPlayerID
+wTemp := readMem(hGTA, dwPlayers + 4, 2, "Short")	;localPlayerID
+if(ErrorLevel) {
+ErrorLevel := ERROR_READ_MEMORY
+return ""
+}
+if(wTemp == dwId) {
+dwTemp2 := readDWORD(hGTA, dwPlayers + 26)
+if(ErrorLevel) {
+ErrorLevel := ERROR_READ_MEMORY
+return ""
+}
+if(dwTemp2 <= 0xf) {
+sUsername := readString(hGTA, dwPlayers + 10, 16)
+if(ErrorLevel) {
+ErrorLevel := ERROR_READ_MEMORY
+return ""
+}
+ErrorLevel := ERROR_OK
+return sUsername
+}
+dwAddress := readDWORD(hGTA, dwPlayers + 10)
+if(ErrorLevel) {
+ErrorLevel := ERROR_READ_MEMORY
+return ""
+}
+sUsername := readString(hGTA, dwAddress, 25)
+if(ErrorLevel) {
+ErrorLevel := ERROR_READ_MEMORY
+return ""
+}
+ErrorLevel := ERROR_OK
+return sUsername
+}
+
+dwRemoteplayer := readDWORD(hGTA, dwPlayers+0x2e+dwId*4) ;pRemoteplayer
+if(ErrorLevel || dwRemoteplayer==0) {
+ErrorLevel := ERROR_READ_MEMORY
+return ""
+}
+
+dwTemp := readDWORD(hGTA, dwRemoteplayer + 36)	;iStrlenName__
+if(ErrorLevel) {
+ErrorLevel := ERROR_READ_MEMORY
+return ""
+}
+if(dwTemp <= 0xf)
+{
+sUsername := readString(hGTA, dwRemoteplayer+0x14, 16)
+if(ErrorLevel) {
+ErrorLevel := ERROR_READ_MEMORY
+return ""
+}
+ErrorLevel := ERROR_OK
+return sUsername
+}
+
+dwAddress := readDWORD(hGTA, dwRemoteplayer + 0x14)
+if(ErrorLevel || dwAddress==0) {
+ErrorLevel := ERROR_READ_MEMORY
+return ""
+}
+
+sUsername := readString(hGTA, dwAddress, 25)
+if(ErrorLevel) {
+ErrorLevel := ERROR_READ_MEMORY
+return ""
+}
+ErrorLevel := ERROR_OK
+return sUsername
+}
+
+getPlayerPingById(dwId) {
+if(!checkHandles())
+return -1
+
+if(dwId < 0 || dwId > 1004)
+return -1
+
+dwAddress := readDWORD(hGTA, dwSAMP + 0x212A80)	;g_SAMP
+if(ErrorLevel || dwAddress==0) {
+ErrorLevel := ERROR_READ_MEMORY
+return -1
+}
+
+dwAddress := readDWORD(hGTA, dwAddress + 0x3d9)	;pPools
+if(ErrorLevel || dwAddress==0) {
+ErrorLevel := ERROR_READ_MEMORY
+return -1
+}
+
+dwPlayers := readDWORD(hGTA, dwAddress + 0x14) ;g_Players
+if(ErrorLevel || dwPlayers==0) {
+ErrorLevel := ERROR_READ_MEMORY
+return -1
+}
+;wTemp := readWORD(hGTA, dwPlayers + 4) ;localPlayerID
+wTemp := readMem(hGTA, dwPlayers + 4, 2, "Short")	;localPlayerID
+if(ErrorLevel) {
+ErrorLevel := ERROR_READ_MEMORY
+return -1
+}
+
+if(wTemp == dwId) {
+;dwTemp := readDWORD(hGTA, dwPlayers + 0x26)
+dwTemp := readMem(hGTA, dwPlayers + 0x26, 4, "Int")
+if(ErrorLevel) {
+ErrorLevel := ERROR_READ_MEMORY
+return -1
+}
+ErrorLevel := ERROR_OK
+return dwTemp
+}
+
+dwRemoteplayer := readDWORD(hGTA, dwPlayers+0x2e+dwId*4) ;pRemoteplayer
+if(ErrorLevel || dwRemoteplayer==0) {
+ErrorLevel := ERROR_READ_MEMORY
+return -1
+}
+;dwTemp := readDWORD(hGTA, dwRemoteplayer + 12)
+dwTemp := readMem(hGTA, dwRemoteplayer + 12, 4, "Int")
+if(ErrorLevel) {
+ErrorLevel := ERROR_READ_MEMORY
+return -1
+}
+ErrorLevel := ERROR_OK
+return dwTemp
+}
+
+getPlayerScoreById(dwId) {
+if(!checkHandles())
+return ""
+
+if(dwId < 0 || dwId > 1004)
+return ""
+
+dwAddress := readDWORD(hGTA, dwSAMP + 0x212A80)	;g_SAMP
+if(ErrorLevel || dwAddress==0) {
+ErrorLevel := ERROR_READ_MEMORY
+return ""
+}
+
+dwAddress := readDWORD(hGTA, dwAddress + 0x3d9)	;pPools
+if(ErrorLevel || dwAddress==0) {
+ErrorLevel := ERROR_READ_MEMORY
+return ""
+}
+
+dwPlayers := readDWORD(hGTA, dwAddress + 0x14) ;g_Players
+if(ErrorLevel || dwPlayers==0) {
+ErrorLevel := ERROR_READ_MEMORY
+return ""
+}
+;wTemp := readWORD(hGTA, dwPlayers + 4) ;localPlayerID
+wTemp := readMem(hGTA, dwPlayers + 4, 2, "Short")	;localPlayerID
+if(ErrorLevel) {
+ErrorLevel := ERROR_READ_MEMORY
+return ""
+}
+
+if(wTemp == dwId) {
+;dwTemp := readDWORD(hGTA, dwPlayers + 0x2a)
+dwTemp := readMem(hGTA, dwPlayers + 0x2a, 4, "Int")
+if(ErrorLevel) {
+ErrorLevel := ERROR_READ_MEMORY
+return ""
+}
+ErrorLevel := ERROR_OK
+return dwTemp
+}
+
+dwRemoteplayer := readDWORD(hGTA, dwPlayers+0x2e+dwId*4) ;pRemoteplayer
+if(ErrorLevel || dwRemoteplayer==0) {
+ErrorLevel := ERROR_READ_MEMORY
+return ""
+}
+;dwTemp := readDWORD(hGTA, dwRemoteplayer + 4)
+dwTemp := readMem(hGTA, dwRemoteplayer + 4, 4, "Int")
+if(ErrorLevel) {
+ErrorLevel := ERROR_READ_MEMORY
+return ""
+}
+ErrorLevel := ERROR_OK
+return dwTemp
+}
 
 ; ##### Spielerfunktionen #####
 GetPlayerHealth() {
