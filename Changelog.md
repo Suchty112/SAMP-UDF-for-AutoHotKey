@@ -2,6 +2,8 @@ R8.4
 
 Sachen von R7 sind wieder drinne :)
 
+Übrigens dank Hilfe von [Chuck_Floyd](https://github.com/FrozenBrain/)
+
 R8.3
 
 ANSI verfügbarkeit hinzugefügt, danke dafür an [Agrippa1994](https://github.com/agrippa1994)
