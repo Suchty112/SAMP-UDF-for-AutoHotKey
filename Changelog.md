@@ -1,3 +1,18 @@
+R10
+
+getId()
+isNPCById(dwId)
+getPlayerInteriorId()
+getPlayerMoney()
+isPlayerInAnyVehicle()
+isPlayerDriver()
+getVehicleType()
+getVehicleModelId()
+getVehicleModelName()
+getVehicleLightState()
+getVehicleEngineState()
+getVehicleLockState()
+
 R9.1
 
 Einige Sachen hinzugefügt per Fork von agrippa und paul-phönix
