@@ -15,3 +15,6 @@ English
 This collection of features allows access GTA and SAMP, so as to manipulate the chat or read data. The UDF was written by Carsten S. (aka Chuck Floyd on GitHub and Edited with Tobias L. (aka Monty_Python / Suchty112 on SA: MP / SAMP API)) with functions of: paul phoenix and agrippa1994. Thanks to you both.
 
 You may like to be used for each type of AHK project, as long as a link to the repository remains at least exist in the source code (for a more mentions there are of course no objection).
+
+SAMP-UDF-for-AutoHotKey von Suchty112 ist lizenziert unter einer
+[Creative Commons Namensnennung - Weitergabe unter gleichen Bedingungen 4.0 International Lizenz.](http://creativecommons.org/licenses/by-sa/4.0/)
