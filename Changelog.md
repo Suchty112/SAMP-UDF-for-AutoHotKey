@@ -1,16 +1,27 @@
 R10
 
 getId()
+
 isNPCById(dwId)
+
 getPlayerInteriorId()
+
 getPlayerMoney()
+
 isPlayerInAnyVehicle()
+
 isPlayerDriver()
+
 getVehicleType()
+
 getVehicleModelId()
+
 getVehicleModelName()
+
 getVehicleLightState()
+
 getVehicleEngineState()
+
 getVehicleLockState()
 
 R9.1
