@@ -2,6 +2,10 @@ SAMP UDF für AutoHotKey
 =======================
 Version R 10
 ----------
+Wiki
+Hier geht's lang zum [Wiki](http://wiki.samp-udf.net/index.php?title=Hauptseite)
+---
+
 Deutsch
 
 Diese Sammlung von Funktionen ermöglicht es, auf GTA bzw. SAMP zuzugreifen, um so den Chat zu manipulieren oder Daten auszulesen.
