@@ -102,10 +102,10 @@ global iUpdateTick := 2500 ;time in ms, used for getPlayerNameById etc. to refre
 
 ; #####################################################################################################################
 ; # SAMP-Funktionen:                                                                                                  #
-; #     - isInChat()                                Prüft, ob der Spieler gerade chattet oder in einem Dialog ist     #
+; #     - isInChat()                                PrÃ¼ft, ob der Spieler gerade chattet oder in einem Dialog ist     #
 ; #     - getUsername()                             Liest den Namen des Spielers aus                                  #
 ; #     - SendChat(wText)                           Sendet eine Nachricht od. einen Befehl direkt an den Server       #
-; #     - addChatMessage(wText)                     Fügt eine Zeile in den Chat ein (nur für den Spieler sichtbar)    #
+; #     - addChatMessage(wText)                     FÃ¼gt eine Zeile in den Chat ein (nur fÃ¼r den Spieler sichtbar)    #
 ; #     - showGameText(wText, dwTime, dwTextsize)   Zeigt einen Text inmitten des Bildschirmes an  					  #
 ; #     - showDialog(dwStyle, wCaption, wInfo, wButton1) Zeigt einen Dialog an									 	  #
 ; #     - playAudioStream(wUrl)                     Spielt einen "Audio Stream" ab                                    #
@@ -125,7 +125,7 @@ global iUpdateTick := 2500 ;time in ms, used for getPlayerNameById etc. to refre
 ; #####################################################################################################################
 ; # Spielerfunktionen:                                                                                                #
 ; #     - getPlayerHealth()                         Ermittelt die HP des Spielers                                     #
-; #     - getPlayerArmor()                          Ermittelt den Rüstungswert des Spielers                           #
+; #     - getPlayerArmor()                          Ermittelt den RÃ¼stungswert des Spielers                           #
 ; # 	- getPlayerInteriorId()						Ermittelt die Interior ID wo der Spieler ist 					  #
 ; # 	- getPlayerMoney() 							Ermittelt den Kontostand des Spielers (nur GTA Intern)			  #
 ; #####################################################################################################################
@@ -144,12 +144,12 @@ global iUpdateTick := 2500 ;time in ms, used for getPlayerNameById etc. to refre
 ; #     - getCoordinates()                          Ermittelt die aktuelle Position (Koordinaten)                     #
 ; # ----------------------------------------------------------------------------------------------------------------- #
 ; #     - initZonesAndCities()                      Initialisiert eine Liste aller Standartgebiete                    #
-; #                                                 (Voraussetzung für die folgenden Funktionen dieser Kategorie)     #
+; #                                                 (Voraussetzung fÃ¼r die folgenden Funktionen dieser Kategorie)     #
 ; #     - calculateZone(X, Y, Z)                    Bestimmt die Zone (= Stadtteil) aus den geg. Koordinaten          #
 ; #     - calculateCity(X, Y, Z)                    Bestimmt die Stadt aus den geg. Koordinaten                       #
 ; #     - getCurrentZonecode()                      Ermittelt die aktulle Zone in Kurzform                            #
-; #     - AddZone(Name, X1, Y1, Z1, X2, Y2, Z2)     Fügt eine Zone zum Index hinzu                                    #
-; #     - AddCity(Name, X1, Y1, Z1, X2, Y2, Z2)     Fügt eine Stadt zum Index hinzu                                   #
+; #     - AddZone(Name, X1, Y1, Z1, X2, Y2, Z2)     FÃ¼gt eine Zone zum Index hinzu                                    #
+; #     - AddCity(Name, X1, Y1, Z1, X2, Y2, Z2)     FÃ¼gt eine Stadt zum Index hinzu                                   #
 ; #####################################################################################################################
 ; # Sonstiges:                                                                                                        #
 ; #     - checkHandles()                                                                                              #
@@ -687,7 +687,7 @@ updateOScoreboardData(ex=0) {
     }
     oScoreboardData[wID] := Object("NAME", sUsername, "ID", wID, "PING", dwPing, "SCORE", dwScore, "ISNPC", 0)
     
-    Loop, % SAMP_PLAYER_MAX %
+    Loop, % SAMP_PLAYER_MAX
     {
         i := A_Index-1
         
@@ -914,7 +914,7 @@ getVehicleType() {
     if(!cVal)
     {
         mid := getVehicleModelId()
-        Loop % oAirplaneModels.MaxIndex() %
+        Loop % oAirplaneModels.MaxIndex()
         {
             if(oAirplaneModels[A_Index]==mid)
                 return 5
@@ -928,7 +928,7 @@ getVehicleType() {
     else if(cVal==9)
     {
         mid := getVehicleModelId()
-        Loop % oBikeModels.MaxIndex() %
+        Loop % oBikeModels.MaxIndex()
         {
             if(oBikeModels[A_Index]==mid)
                 return 6
