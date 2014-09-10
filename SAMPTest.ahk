@@ -102,3 +102,12 @@ addChatMessage("{FFFFFF}Light State:" getVehicleLightState())
 addChatMessage("{FFFFFF}Engine State:" getVehicleEngineState())
 addChatMessage("{FFFFFF}Door State:" getVehicleLockState())
 return
+
+Numpad9::
+addMessageToChatWindow("{FFFFFF}block chat " (blchat ? "{FF0000}off" : "{00FF00}on"))
+if(blchat)
+	unBlockChatInput()
+else
+	blockChatInput()
+blchat:=!blchat
+return
