@@ -1,4 +1,4 @@
-; #### SAMP UDF R10 ####
+; #### SAMP UDF R10.1 ####
 ; SAMP Version: 0.3z R1
 ; Written by Chuck_Floyd 
 ; https://github.com/FrozenBrain
@@ -107,52 +107,57 @@ global iUpdateTick := 2500 ;time in ms, used for getPlayerNameById etc. to refre
 ; #     - SendChat(wText)                           Sendet eine Nachricht od. einen Befehl direkt an den Server       #
 ; #     - addChatMessage(wText)                     FÃ¼gt eine Zeile in den Chat ein (nur fÃ¼r den Spieler sichtbar)    #
 ; #     - showGameText(wText, dwTime, dwTextsize)   Zeigt einen Text inmitten des Bildschirmes an  					  #
-; #     - showDialog(dwStyle, wCaption, wInfo, wButton1) Zeigt einen Dialog an									 	  #
+; #     - showDialog(dwStyle, wCaption, wInfo, wButton1) Zeigt einen Dialog an					 	  #
 ; #     - playAudioStream(wUrl)                     Spielt einen "Audio Stream" ab                                    #
 ; #     - stopAudioStream()                         Stoppt den aktuellen Audio Stream                                 #
-; #		- GetChatLine								Liest die eingestellte Zeile aus								  #
-; # 	- blockChatInput() 							Eine Funktion um Messages zum Server zu blockieren				  #
+; #		- GetChatLine								Liest die eingestellte Zeile aus	  #
+; # 	- blockChatInput() 							Eine Funktion um Messages zum Server zu blockieren			  #
 ; # 	- unBlockChatInput() 						Eine Funktion um Messages zum Server zu entblockieren			  #
 ; # ----------------------------------------------------------------------------------------------------------------- #
-; # - patchRadio() (interner stuff) 																				  #
-; # - unPatchRadio() (interner stuff)																			      #
+; # - patchRadio() (interner stuff) 										  #
+; # - unPatchRadio() (interner stuff)											 #
 ; #####################################################################################################################
-; # 																											      #
+; # 														      #
 ; #     - getPlayerScoreById(dwId)                  Zeigt den Score zu der Id                                         #
 ; #     - getPlayerPingById(dwId)                   Zeigt den Ping zu der Id                                          #
 ; #     - getPlayerNameById(dwId)                   Zeigt den Namen zu der Id                                         #
 ; #     - getPlayerIdByName(wName)                  Zeigt die Id zu dem Namen                                         #
 ; #     - updateScoreboardDataEx()                  Aktualisiert Scoreboard Inhalte (wird implizit aufgerufen)        #
 ; #     - updateOScoreboardData()                   Aktualisiert Scoreboard Inhalte (wird implizit aufgerufen)        #
-; #		- isNPCById(dwId)   						Zeigt an ob die ID ein NPC 										  #
+; #	- isNPCById(dwId)   			    Zeigt an ob die ID ein NPC 						  #
 ; #####################################################################################################################
 ; # Spielerfunktionen:                                                                                                #
 ; #     - getPlayerHealth()                         Ermittelt die HP des Spielers                                     #
 ; #     - getPlayerArmor()                          Ermittelt den RÃ¼stungswert des Spielers                           #
-; # 	- getPlayerInteriorId()						Ermittelt die Interior ID wo der Spieler ist 					  #
-; # 	- getPlayerMoney() 							Ermittelt den Kontostand des Spielers (nur GTA Intern)			  #
+; # 	- getPlayerInteriorId()			    Ermittelt die Interior ID wo der Spieler ist 		  #
+; # 	- getPlayerMoney() 			    Ermittelt den Kontostand des Spielers (nur GTA Intern)       #
 ; #####################################################################################################################
 ; # Fahrzeugfunktionen:                                                                                               #
 ; #     - isPlayerInAnyVehicle()                    Ermittelt, ob sich der Spieler in einem Fahrzeug befindet         #
 ; #     - getVehicleHealth()                        Ermittelt die HP des Fahrzeugs, in dem der Spieler sitzt          #
-; # 	- isPlayerDriver() 							Ermittelt ob der Spieler Fahrer des Auto's ist					  #
-; # 	- getVehicleType() 							Ermittelt den FahrzeugTyp(Auto,LKW etc)                           #
-; # 	- getVehicleModelId()						Ermittelt die Fahrzeugmodell ID 								  #
-; # 	- getVehicleModelName() 					Ermittelt den FahrzeugModell Namen 								  #
-; # 	- getVehicleLightState() 					Ermittelt den Lichtzustand vom Auto 							  #
-; # 	- getVehicleEngineState() 					Ermittelt den Motorzustand vom Auto 							  #
-; # 	- getVehicleLockState() 					Ermittelt ob das Auto auf oder zu ist 							  #
+; # 	- isPlayerDriver() 			    Ermittelt ob der Spieler Fahrer des Auto's ist		      #
+; # 	- getVehicleType() 			    Ermittelt den FahrzeugTyp(Auto,LKW etc)                           #
+; # 	- getVehicleModelId()			    Ermittelt die Fahrzeugmodell ID 				  #
+; # 	- getVehicleModelName() 		    Ermittelt den FahrzeugModell Namen 				#
+; # 	- getVehicleLightState() 		    Ermittelt den Lichtzustand vom Auto 			  #
+; # 	- getVehicleEngineState() 		    Ermittelt den Motorzustand vom Auto 			  #
+; # 	- getVehicleLockState() 		    Ermittelt ob das Auto auf oder zu ist 			  #
 ; #####################################################################################################################
 ; # Standpunktbestimmung:                                                                                             #
 ; #     - getCoordinates()                          Ermittelt die aktuelle Position (Koordinaten)                     #
+; #	- GetPlayerPos(X,Y,Z) 			   siehe oben drüber 						      #
 ; # ----------------------------------------------------------------------------------------------------------------- #
 ; #     - initZonesAndCities()                      Initialisiert eine Liste aller Standartgebiete                    #
 ; #                                                 (Voraussetzung fÃ¼r die folgenden Funktionen dieser Kategorie)     #
 ; #     - calculateZone(X, Y, Z)                    Bestimmt die Zone (= Stadtteil) aus den geg. Koordinaten          #
 ; #     - calculateCity(X, Y, Z)                    Bestimmt die Stadt aus den geg. Koordinaten                       #
 ; #     - getCurrentZonecode()                      Ermittelt die aktulle Zone in Kurzform                            #
-; #     - AddZone(Name, X1, Y1, Z1, X2, Y2, Z2)     FÃ¼gt eine Zone zum Index hinzu                                    #
-; #     - AddCity(Name, X1, Y1, Z1, X2, Y2, Z2)     FÃ¼gt eine Stadt zum Index hinzu                                   #
+; #     - AddZone(Name, X1, Y1, Z1, X2, Y2, Z2)     Fügt eine Zone zum Index hinzu                                    #
+; #     - AddCity(Name, X1, Y1, Z1, X2, Y2, Z2)     Fügt eine Stadt zum Index hinzu                                   #
+; #	- IsPlayerInRangeOfPoint(X, Y, Z, Radius)   Bestimmt ob der Spieler in der Nähe der Koordinaten ist #
+; #	- IsIsPlayerInRangeOfPoint2D(X, Y, Radius)  Bestimmt ob der Spieler in der Nähe der Koordinaten ist #
+; #	- getPlayerZone()			    -							#
+; #	- getPlayerCity()			    -						#
 ; #####################################################################################################################
 ; # Sonstiges:                                                                                                        #
 ; #     - checkHandles()                                                                                              #
@@ -882,6 +887,28 @@ getPlayerMoney() {
     ErrorLevel := ERROR_OK
     return money
 }
+
+getPlayerWanteds() {
+    if(!checkHandles())
+        return -1
+ 
+    dwPtr := 0xB7CD9C
+    dwPtr := readDWORD(hGTA, dwPtr)
+    if(ErrorLevel) {
+        ErrorLevel := ERROR_READ_MEMORY
+        return -1
+    }
+ 
+    Wanteds := readDWORD(hGTA, dwPtr)
+    if(ErrorLevel) {
+        ErrorLevel := ERROR_READ_MEMORY
+        return -1
+    }
+ 
+    ErrorLevel := ERROR_OK
+    return Wanteds
+}
+
 ; ##### Fahrzeugfunktionen #####
 
 isPlayerInAnyVehicle()
@@ -1126,6 +1153,31 @@ getCoordinates() {
     
     ErrorLevel := ERROR_OK
     return [fX, fY, fZ]
+}
+
+GetPlayerPos(ByRef fX,ByRef fY,ByRef fZ) {
+        if(!checkHandles())
+                return 0
+ 
+        fX := readFloat(hGTA, ADDR_POSITION_X)
+        if(ErrorLevel) {
+                ErrorLevel := ERROR_READ_MEMORY
+                return 0
+        }
+ 
+        fY := readFloat(hGTA, ADDR_POSITION_Y)
+        if(ErrorLevel) {
+                ErrorLevel := ERROR_READ_MEMORY
+                return 0
+        }
+ 
+        fZ := readFloat(hGTA, ADDR_POSITION_Z)
+        if(ErrorLevel) {
+                ErrorLevel := ERROR_READ_MEMORY
+                return 0
+        }
+ 
+        ErrorLevel := ERROR_OK
 }
 
 initZonesAndCities() {
@@ -1604,6 +1656,40 @@ AddCity(sName, x1, y1, z1, x2, y2, z2) {
     city%nCity%_y2 := y2
     city%nCity%_z2 := z2
     nCity := nCity + 1
+}
+
+IsPlayerInRangeOfPoint(_posX, _posY, _posZ, _posRadius)
+{
+	GetPlayerPos(posX, posY, posZ)
+	X := posX -_posX
+	Y := posY -_posY
+	Z := posZ -_posZ
+	if(((X < _posRadius) && (X > -_posRadius)) && ((Y < _posRadius) && (Y > -_posRadius)) && ((Z < _posRadius) && (Z > -_posRadius)))
+		return TRUE
+	return FALSE
+}
+ 
+IsPlayerInRangeOfPoint2D(_posX, _posY, _posRadius)
+{
+ 
+	GetPlayerPos(posX, posY, posZ)
+	X := posX - _posX
+	Y := posY - _posY
+	if(((X < _posRadius) && (X > -_posRadius)) && ((Y < _posRadius) && (Y > -_posRadius)))
+		return TRUE
+	return FALSE
+}
+
+getPlayerZone()
+{
+	aktPos := getCoordinates()
+	return calculateZone(aktPos[1], aktPos[2], aktPos[3])
+}
+
+getPlayerCity()
+{
+	aktPos := getCoordinates()
+	return calculateCity(aktPos[1], aktPos[2], aktPos[3])
 }
 
 ; ##### Sonstiges #####
