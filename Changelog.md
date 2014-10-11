@@ -1,3 +1,18 @@
+R10.1
+
+getPlayerZone() 
+
+getPlayerCity()
+
+getPlayerWanteds()
+
+IsPlayerInRangeOfPoint()
+
+IsPlayerInRangeOfPoint2D() 
+
+GetPlayerPos
+
+
 R10
 
 getId()
