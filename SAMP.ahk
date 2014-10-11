@@ -131,6 +131,7 @@ global iUpdateTick := 2500 ;time in ms, used for getPlayerNameById etc. to refre
 ; #     - getPlayerArmor()                          Ermittelt den RÃ¼stungswert des Spielers                           #
 ; # 	- getPlayerInteriorId()			    Ermittelt die Interior ID wo der Spieler ist 		  #
 ; # 	- getPlayerMoney() 			    Ermittelt den Kontostand des Spielers (nur GTA Intern)       #
+; #	- getPlayerWanteds()			    Ermittelt die Wantedanzahl des Spielers(nur bis 6 Wanteds) #
 ; #####################################################################################################################
 ; # Fahrzeugfunktionen:                                                                                               #
 ; #     - isPlayerInAnyVehicle()                    Ermittelt, ob sich der Spieler in einem Fahrzeug befindet         #
