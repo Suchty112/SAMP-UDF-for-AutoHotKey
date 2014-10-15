@@ -1,3 +1,8 @@
+R10.1.1
+
+getVehicleLightState() gefixxt
+
+
 R10.1
 
 getPlayerZone() 
@@ -10,7 +15,7 @@ IsPlayerInRangeOfPoint()
 
 IsPlayerInRangeOfPoint2D() 
 
-GetPlayerPos
+GetPlayerPos()
 
 
 R10
