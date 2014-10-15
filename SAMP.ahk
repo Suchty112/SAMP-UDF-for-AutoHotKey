@@ -1,4 +1,4 @@
-; #### SAMP UDF R10.1 ####
+; #### SAMP UDF R10.1.1 ####
 ; SAMP Version: 0.3z R1
 ; Written by Chuck_Floyd 
 ; https://github.com/FrozenBrain
@@ -42,7 +42,7 @@ global ADDR_CPED_MONEY := 0xB7CE50
 global ADDR_CPED_INTID := 0xA4ACE8
 global ADDR_VEHICLE_DOORSTATE := 0x4F8
 global ADDR_VEHICLE_ENGINESTATE := 0x428
-global ADDR_VEHICLE_LIGHTSTATE := 0x428
+global ADDR_VEHICLE_LIGHTSTATE := 0x584
 global ADDR_VEHICLE_MODEL := 0x22
 global ADDR_VEHICLE_TYPE := 0x590
 global ADDR_VEHICLE_DRIVER := 0x460
@@ -114,8 +114,8 @@ global iUpdateTick := 2500 ;time in ms, used for getPlayerNameById etc. to refre
 ; # 	- blockChatInput() 							Eine Funktion um Messages zum Server zu blockieren			  #
 ; # 	- unBlockChatInput() 						Eine Funktion um Messages zum Server zu entblockieren			  #
 ; # ----------------------------------------------------------------------------------------------------------------- #
-; # - patchRadio() (interner stuff) 										  #
-; # - unPatchRadio() (interner stuff)											 #
+; #     - patchRadio() (interner stuff) 										  #
+; #     - unPatchRadio() (interner stuff)											 #
 ; #####################################################################################################################
 ; # 														      #
 ; #     - getPlayerScoreById(dwId)                  Zeigt den Score zu der Id                                         #
@@ -124,14 +124,14 @@ global iUpdateTick := 2500 ;time in ms, used for getPlayerNameById etc. to refre
 ; #     - getPlayerIdByName(wName)                  Zeigt die Id zu dem Namen                                         #
 ; #     - updateScoreboardDataEx()                  Aktualisiert Scoreboard Inhalte (wird implizit aufgerufen)        #
 ; #     - updateOScoreboardData()                   Aktualisiert Scoreboard Inhalte (wird implizit aufgerufen)        #
-; #	- isNPCById(dwId)   			    Zeigt an ob die ID ein NPC 						  #
+; #	    - isNPCById(dwId)   			    Zeigt an ob die ID ein NPC 						  #
 ; #####################################################################################################################
 ; # Spielerfunktionen:                                                                                                #
 ; #     - getPlayerHealth()                         Ermittelt die HP des Spielers                                     #
 ; #     - getPlayerArmor()                          Ermittelt den RÃ¼stungswert des Spielers                           #
 ; # 	- getPlayerInteriorId()			    Ermittelt die Interior ID wo der Spieler ist 		  #
 ; # 	- getPlayerMoney() 			    Ermittelt den Kontostand des Spielers (nur GTA Intern)       #
-; #	- getPlayerWanteds()			    Ermittelt die Wantedanzahl des Spielers(nur bis 6 Wanteds) #
+; #	    - getPlayerWanteds()			    Ermittelt die Wantedanzahl des Spielers(nur bis 6 Wanteds) #
 ; #####################################################################################################################
 ; # Fahrzeugfunktionen:                                                                                               #
 ; #     - isPlayerInAnyVehicle()                    Ermittelt, ob sich der Spieler in einem Fahrzeug befindet         #
@@ -155,10 +155,10 @@ global iUpdateTick := 2500 ;time in ms, used for getPlayerNameById etc. to refre
 ; #     - getCurrentZonecode()                      Ermittelt die aktulle Zone in Kurzform                            #
 ; #     - AddZone(Name, X1, Y1, Z1, X2, Y2, Z2)     Fügt eine Zone zum Index hinzu                                    #
 ; #     - AddCity(Name, X1, Y1, Z1, X2, Y2, Z2)     Fügt eine Stadt zum Index hinzu                                   #
-; #	- IsPlayerInRangeOfPoint(X, Y, Z, Radius)   Bestimmt ob der Spieler in der Nähe der Koordinaten ist #
-; #	- IsIsPlayerInRangeOfPoint2D(X, Y, Radius)  Bestimmt ob der Spieler in der Nähe der Koordinaten ist #
-; #	- getPlayerZone()			    -							#
-; #	- getPlayerCity()			    -						#
+; #	    - IsPlayerInRangeOfPoint(X, Y, Z, Radius)   Bestimmt ob der Spieler in der Nähe der Koordinaten ist #
+; #	    - IsIsPlayerInRangeOfPoint2D(X, Y, Radius)  Bestimmt ob der Spieler in der Nähe der Koordinaten ist #
+; #	    - getPlayerZone()			    -							#
+; #	    - getPlayerCity()			    -						#
 ; #####################################################################################################################
 ; # Sonstiges:                                                                                                        #
 ; #     - checkHandles()                                                                                              #
