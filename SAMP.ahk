@@ -1,5 +1,5 @@
-; #### SAMP UDF R10.1.1 ####
-; SAMP Version: 0.3z R1
+; #### SAMP UDF R11 ####
+; SAMP Version: 0.3z R2
 ; Written by Chuck_Floyd 
 ; https://github.com/FrozenBrain
 ; Modified by Suchty112
@@ -38,7 +38,9 @@ global ADDR_CPED_HPOFF := 0x540
 global ADDR_CPED_ARMOROFF := 0x548
 global ADDR_VEHICLE_PTR := 0xBA18FC
 global ADDR_VEHICLE_HPOFF := 0x4C0
-global ADDR_CPED_MONEY := 0xB7CE50
+global ADDR_CPED_MONEY := 0x0B7CE54
+;global ADDR_CPED_MONEY := 0x0B7CE50
+;global ADDR_CPED_MONEY := 0x0BAA430
 global ADDR_CPED_INTID := 0xA4ACE8
 global ADDR_VEHICLE_DOORSTATE := 0x4F8
 global ADDR_VEHICLE_ENGINESTATE := 0x428
@@ -50,20 +52,21 @@ global oAirplaneModels := [417, 425, 447, 460, 469, 476, 487, 488, 497, 511, 512
 global oBikeModels := [481,509,510]
 global ovehicleNames := ["Landstalker","Bravura","Buffalo","Linerunner","Perrenial","Sentinel","Dumper","Firetruck","Trashmaster","Stretch","Manana","Infernus","Voodoo","Pony","Mule","Cheetah","Ambulance","Leviathan","Moonbeam","Esperanto","Taxi","Washington","Bobcat","Whoopee","BFInjection","Hunter","Premier","Enforcer","Securicar","Banshee","Predator","Bus","Rhino","Barracks","Hotknife","Trailer","Previon","Coach","Cabbie","Stallion","Rumpo","RCBandit","Romero","Packer","Monster","Admiral","Squalo","Seasparrow","Pizzaboy","Tram","Trailer","Turismo","Speeder","Reefer","Tropic","Flatbed","Yankee","Caddy","Solair","Berkley'sRCVan","Skimmer","PCJ-600","Faggio","Freeway","RCBaron","RCRaider","Glendale","Oceanic","Sanchez","Sparrow","Patriot","Quad","Coastguard","Dinghy","Hermes","Sabre","Rustler","ZR-350","Walton","Regina","Comet","BMX","Burrito","Camper","Marquis","Baggage","Dozer","Maverick","NewsChopper","Rancher","FBIRancher","Virgo","Greenwood","Jetmax","Hotring","Sandking","BlistaCompact","PoliceMaverick","Boxvillde","Benson","Mesa","RCGoblin","HotringRacerA","HotringRacerB","BloodringBanger","Rancher","SuperGT","Elegant","Journey","Bike","MountainBike","Beagle","Cropduster","Stunt","Tanker","Roadtrain","Nebula","Majestic","Buccaneer","Shamal","hydra","FCR-900","NRG-500","HPV1000","CementTruck","TowTruck","Fortune","Cadrona","FBITruck","Willard","Forklift","Tractor","Combine","Feltzer","Remington","Slamvan","Blade","Freight","Streak","Vortex","Vincent","Bullet","Clover","Sadler","Firetruck","Hustler","Intruder","Primo","Cargobob","Tampa","Sunrise","Merit","Utility","Nevada","Yosemite","Windsor","Monster","Monster","Uranus","Jester","Sultan","Stratum","Elegy","Raindance","RCTiger","Flash","Tahoma","Savanna","Bandito","FreightFlat","StreakCarriage","Kart","Mower","Dune","Sweeper","Broadway","Tornado","AT-400","DFT-30","Huntley","Stafford","BF-400","NewsVan","Tug","Trailer","Emperor","Wayfarer","Euros","Hotdog","Club","FreightBox","Trailer","Andromada","Dodo","RCCam","Launch","PoliceCar","PoliceCar","PoliceCar","PoliceRanger","Picador","S.W.A.T","Alpha","Phoenix","GlendaleShit","SadlerShit","Luggage","Luggage","Stairs","Boxville","Tiller","UtilityTrailer"]
 ; SAMP Addresses
-global ADDR_SAMP_INCHAT_PTR := 0x212A94
+global ADDR_SAMP_INCHAT_PTR := 0x212ACC
 global ADDR_SAMP_INCHAT_PTR_OFF := 0x55
-global ADDR_SAMP_USERNAME := 0x2123F7
-global ADDR_SAMP_CHATMSG_PTR := 0x212A6C
-global ADDR_SAMP_SHOWDLG_PTR := 0x212A40
-global FUNC_SAMP_SENDCMD := 0x7BDD0
-global FUNC_SAMP_SENDSAY := 0x4CA0
-global FUNC_SAMP_ADDTOCHATWND := 0x7AA00
-global FUNC_SAMP_SHOWGAMETEXT := 0x643B0
-global FUNC_SAMP_PLAYAUDIOSTR := 0x79300
-global FUNC_SAMP_STOPAUDIOSTR := 0x78F00
-global FUNC_SAMP_SHOWDIALOG := 0x816F0
-global FUNC_UPDATESCOREBOARD := 0x7D10
-global SAMP_INFO_OFFSET := 0x212A80
+;global ADDR_SAMP_USERNAME := 0x2123F7 ;alt
+global ADDR_SAMP_USERNAME := 0x21242F ;R2
+global ADDR_SAMP_CHATMSG_PTR := 0x212AA4
+global ADDR_SAMP_SHOWDLG_PTR := 0x212A78
+global FUNC_SAMP_SENDCMD := 0x63390
+global FUNC_SAMP_SENDSAY := 0x4C30
+global FUNC_SAMP_ADDTOCHATWND := 0x61fc0
+global FUNC_SAMP_SHOWGAMETEXT := 0x98720
+global FUNC_SAMP_PLAYAUDIOSTR := 0x608c0
+global FUNC_SAMP_STOPAUDIOSTR := 0x604c0
+global FUNC_SAMP_SHOWDIALOG := 0x68930
+global FUNC_UPDATESCOREBOARD := 0x7C50
+global SAMP_INFO_OFFSET := 0x212AB8
 global SAMP_PPOOLS_OFFSET := 0x3D9
 global SAMP_PPOOL_PLAYER_OFFSET := 0x14
 global SAMP_SLOCALPLAYERID_OFFSET := 0x4
@@ -80,6 +83,7 @@ global SAMP_IPING_OFFSET := 0xC
 global SAMP_ISCORE_OFFSET := 0x4
 global SAMP_ISNPC_OFFSET := 0x0
 global SAMP_PLAYER_MAX := 1004
+
 ; Sizes
 global SIZE_SAMP_CHATMSG := 0xFC
 ; Internal
@@ -795,27 +799,28 @@ updateOScoreboardData(ex=0) {
 
 
 ; ##### Sonstiges #####
-GetChatLine(Line, ByRef Output, timestamp=0, color=0){
-	chatindex := 0
-	FileRead, file, %A_MyDocuments%\GTA San Andreas User Files\SAMP\chatlog.txt
-	loop, Parse, file, `n, `r
-	{
-		if(A_LoopField)
-			chatindex := A_Index
-	}
-	loop, Parse, file, `n, `r
-	{
-		if(A_Index = chatindex - line){
-			output := A_LoopField
-			break
-		}
-	}
-	file := ""
-	if(!timestamp)
-		output := RegExReplace(output, "U)^\[\d{2}:\d{2}:\d{2}\]")
-	if(!color)
-		output := RegExReplace(output, "Ui)\{[a-f0-9]{6}\}")
-	return
+; written by David_Luchs
+; returns nth message of chatlog (beggining from bottom)
+; -1 = error
+getChatLine(line) {
+	if(!checkHandles())
+		return -1
+	dwPtr := dwSAMP + ADDR_SAMP_CHATMSG_PTR
+	dwAddress := readDWORD(hGTA,dwPtr)
+	if(ErrorLevel) {
+		ErrorLevel := ERROR_READ_MEMORY
+		return -1
+    }
+	; 0x152, offset for first msg
+	; 0xFC, size of a msg
+	; 99, max msg
+	chatLine := readString(hGTA, dwAddress + 0x152 + ( (99-line) * 0xFC),252)
+	if(ErrorLevel) {
+		ErrorLevel := ERROR_READ_MEMORY
+		return -1
+    }
+	ErrorLevel := ERROR_OK
+	return chatLine
 }
 
 ; ##### Spielerfunktionen #####
