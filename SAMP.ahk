@@ -1,4 +1,4 @@
-; #### SAMP UDF R11 ####
+; #### SAMP UDF R11.1 ####
 ; SAMP Version: 0.3z R2
 ; Written by Chuck_Floyd 
 ; https://github.com/FrozenBrain
@@ -114,7 +114,7 @@ global iUpdateTick := 2500 ;time in ms, used for getPlayerNameById etc. to refre
 ; #     - showDialog(dwStyle, wCaption, wInfo, wButton1) Zeigt einen Dialog an					 	  #
 ; #     - playAudioStream(wUrl)                     Spielt einen "Audio Stream" ab                                    #
 ; #     - stopAudioStream()                         Stoppt den aktuellen Audio Stream                                 #
-; #		- GetChatLine								Liest die eingestellte Zeile aus	  #
+; #	- GetChatLine								Liest die eingestellte Zeile aus	  #
 ; # 	- blockChatInput() 							Eine Funktion um Messages zum Server zu blockieren			  #
 ; # 	- unBlockChatInput() 						Eine Funktion um Messages zum Server zu entblockieren			  #
 ; # ----------------------------------------------------------------------------------------------------------------- #
@@ -802,26 +802,28 @@ updateOScoreboardData(ex=0) {
 ; written by David_Luchs
 ; returns nth message of chatlog (beggining from bottom)
 ; -1 = error
-getChatLine(line) {
-	if(!checkHandles())
-		return -1
-	dwPtr := dwSAMP + ADDR_SAMP_CHATMSG_PTR
-	dwAddress := readDWORD(hGTA,dwPtr)
-	if(ErrorLevel) {
-		ErrorLevel := ERROR_READ_MEMORY
-		return -1
-    }
-	; 0x152, offset for first msg
-	; 0xFC, size of a msg
-	; 99, max msg
-	chatLine := readString(hGTA, dwAddress + 0x152 + ( (99-line) * 0xFC),252)
-	if(ErrorLevel) {
-		ErrorLevel := ERROR_READ_MEMORY
-		return -1
-    }
-	ErrorLevel := ERROR_OK
-	return chatLine
-}
+GetChatLine(Line, ByRef Output, timestamp=0, color=0){
+	chatindex := 0
+	FileRead, file, %A_MyDocuments%\GTA San Andreas User Files\SAMP\chatlog.txt
+	loop, Parse, file, `n, `r
+	{
+		if(A_LoopField)
+			chatindex := A_Index
+	}
+	loop, Parse, file, `n, `r
+	{
+		if(A_Index = chatindex - line){
+			output := A_LoopField
+			break
+		}
+	}
+	file := ""
+	if(!timestamp)
+		output := RegExReplace(output, "U)^\[\d{2}:\d{2}:\d{2}\]")
+	if(!color)
+		output := RegExReplace(output, "Ui)\{[a-f0-9]{6}\}")
+	return
+} 
 
 ; ##### Spielerfunktionen #####
 getPlayerHealth() {
