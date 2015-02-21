@@ -1,3 +1,7 @@
+R11.1
+
+GetChatLine auf alte funktion umgestellt wieder
+
 R11
 
 Update auf 0.3z R2
