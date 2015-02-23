@@ -114,7 +114,8 @@ global iUpdateTick := 2500 ;time in ms, used for getPlayerNameById etc. to refre
 ; #     - showDialog(dwStyle, wCaption, wInfo, wButton1) Zeigt einen Dialog an					 	  #
 ; #     - playAudioStream(wUrl)                     Spielt einen "Audio Stream" ab                                    #
 ; #     - stopAudioStream()                         Stoppt den aktuellen Audio Stream                                 #
-; #	- GetChatLine								Liest die eingestellte Zeile aus	  #
+; #	- GetChatLine(Line, Output)		    Liest die eingestellte Zeile aus,				      #
+; #						    Optionale Parameter (timestamp=0, color=0)			      #
 ; # 	- blockChatInput() 							Eine Funktion um Messages zum Server zu blockieren			  #
 ; # 	- unBlockChatInput() 						Eine Funktion um Messages zum Server zu entblockieren			  #
 ; # ----------------------------------------------------------------------------------------------------------------- #
