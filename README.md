@@ -1,6 +1,6 @@
 SAMP UDF für AutoHotKey
 =======================
-Version R 11.1
+Version R X
 ----------
 
 Hier geht's lang zum [Wiki](http://wiki.samp-udf.net/index.php?title=Hauptseite) und [Forum](http://forum.samp-udf.net)
