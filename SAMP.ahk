@@ -1,5 +1,5 @@
 ; #### SAMP UDF RX ####
-; SAMP Version: 0.3.7 RC2
+; SAMP Version: 0.3.7 RC3
 ; Written by Chuck_Floyd 
 ; https://github.com/FrozenBrain
 ; Modified by Suchty112
@@ -52,21 +52,21 @@ global oAirplaneModels := [417, 425, 447, 460, 469, 476, 487, 488, 497, 511, 512
 global oBikeModels := [481,509,510]
 global ovehicleNames := ["Landstalker","Bravura","Buffalo","Linerunner","Perrenial","Sentinel","Dumper","Firetruck","Trashmaster","Stretch","Manana","Infernus","Voodoo","Pony","Mule","Cheetah","Ambulance","Leviathan","Moonbeam","Esperanto","Taxi","Washington","Bobcat","Whoopee","BFInjection","Hunter","Premier","Enforcer","Securicar","Banshee","Predator","Bus","Rhino","Barracks","Hotknife","Trailer","Previon","Coach","Cabbie","Stallion","Rumpo","RCBandit","Romero","Packer","Monster","Admiral","Squalo","Seasparrow","Pizzaboy","Tram","Trailer","Turismo","Speeder","Reefer","Tropic","Flatbed","Yankee","Caddy","Solair","Berkley'sRCVan","Skimmer","PCJ-600","Faggio","Freeway","RCBaron","RCRaider","Glendale","Oceanic","Sanchez","Sparrow","Patriot","Quad","Coastguard","Dinghy","Hermes","Sabre","Rustler","ZR-350","Walton","Regina","Comet","BMX","Burrito","Camper","Marquis","Baggage","Dozer","Maverick","NewsChopper","Rancher","FBIRancher","Virgo","Greenwood","Jetmax","Hotring","Sandking","BlistaCompact","PoliceMaverick","Boxvillde","Benson","Mesa","RCGoblin","HotringRacerA","HotringRacerB","BloodringBanger","Rancher","SuperGT","Elegant","Journey","Bike","MountainBike","Beagle","Cropduster","Stunt","Tanker","Roadtrain","Nebula","Majestic","Buccaneer","Shamal","hydra","FCR-900","NRG-500","HPV1000","CementTruck","TowTruck","Fortune","Cadrona","FBITruck","Willard","Forklift","Tractor","Combine","Feltzer","Remington","Slamvan","Blade","Freight","Streak","Vortex","Vincent","Bullet","Clover","Sadler","Firetruck","Hustler","Intruder","Primo","Cargobob","Tampa","Sunrise","Merit","Utility","Nevada","Yosemite","Windsor","Monster","Monster","Uranus","Jester","Sultan","Stratum","Elegy","Raindance","RCTiger","Flash","Tahoma","Savanna","Bandito","FreightFlat","StreakCarriage","Kart","Mower","Dune","Sweeper","Broadway","Tornado","AT-400","DFT-30","Huntley","Stafford","BF-400","NewsVan","Tug","Trailer","Emperor","Wayfarer","Euros","Hotdog","Club","FreightBox","Trailer","Andromada","Dodo","RCCam","Launch","PoliceCar","PoliceCar","PoliceCar","PoliceRanger","Picador","S.W.A.T","Alpha","Phoenix","GlendaleShit","SadlerShit","Luggage","Luggage","Stairs","Boxville","Tiller","UtilityTrailer"]
 ; SAMP Addresses
-global ADDR_SAMP_INCHAT_PTR := 0x217be4
+global ADDR_SAMP_INCHAT_PTR := 0x2180f4
 global ADDR_SAMP_INCHAT_PTR_OFF := 0x55
 ;global ADDR_SAMP_USERNAME := 0x2123F7 ;alt
 global ADDR_SAMP_USERNAME := 0x21242F ;R2
-global ADDR_SAMP_CHATMSG_PTR := 0x217bbc
-global ADDR_SAMP_SHOWDLG_PTR := 0x217b90
+global ADDR_SAMP_CHATMSG_PTR := 0x2180cc
+global ADDR_SAMP_SHOWDLG_PTR := 0x2180a0
 global FUNC_SAMP_SENDCMD := 0x64e50
-global FUNC_SAMP_SENDSAY := 0x5260
-global FUNC_SAMP_ADDTOCHATWND := 0x63720
-global FUNC_SAMP_SHOWGAMETEXT := 0x9a660
-global FUNC_SAMP_PLAYAUDIOSTR := 0x61f90
-global FUNC_SAMP_STOPAUDIOSTR := 0x61b90
-global FUNC_SAMP_SHOWDIALOG := 0x6a5e0
-global FUNC_UPDATESCOREBOARD := 0xfc4b0000
-global SAMP_INFO_OFFSET := 0x217bd0
+global FUNC_SAMP_SENDSAY := 0x5250
+global FUNC_SAMP_ADDTOCHATWND := 0x63710
+global FUNC_SAMP_SHOWGAMETEXT := 0x9af40
+global FUNC_SAMP_PLAYAUDIOSTR := 0x61f80
+global FUNC_SAMP_STOPAUDIOSTR := 0x61b80
+global FUNC_SAMP_SHOWDIALOG := 0xfc5e0000
+global FUNC_UPDATESCOREBOARD := 0xfc5e0000
+global SAMP_INFO_OFFSET := 0x2180e0
 global SAMP_PPOOLS_OFFSET := 0x3D9
 global SAMP_PPOOL_PLAYER_OFFSET := 0x14
 global SAMP_SLOCALPLAYERID_OFFSET := 0x4
