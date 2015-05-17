@@ -559,7 +559,7 @@ getPlayerScoreById(dwId) {
         return ""
     }
     
-    if(!updateOScoreboardData(1))
+    if(!updateOScoreboardData())
         return ""
     
     if(oScoreboardData[dwId])
@@ -582,7 +582,7 @@ getPlayerPingById(dwId) {
         return -1
     }
     
-    if(!updateOScoreboardData(1))
+    if(!updateOScoreboardData())
         return -1
     
     if(oScoreboardData[dwId])
@@ -656,17 +656,14 @@ updateScoreboardDataEx() {
 }
 
 ; internal stuff
-updateOScoreboardData(ex=0) {
+updateOScoreboardData() {
     if(!checkHandles())
         return 0
     
     oScoreboardData := []
     
-    if(ex && iRefreshScoreboard+5000 < A_TickCount)
-    {
-        if(!updateScoreboardDataEx())
-            return 0
-    }
+    if(!updateScoreboardDataEx())
+        return 0
     
     iRefreshScoreboard := A_TickCount
     
