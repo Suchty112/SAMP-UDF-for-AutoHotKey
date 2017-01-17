@@ -3,7 +3,7 @@ SAMP UDF für AutoHotKey
 Version R 11.1
 ----------
 
-Hier geht's lang zum [Wiki](http://wiki.samp-udf.net/index.php?title=Hauptseite) und [Forum](http://forum.samp-udf.net)
+Hier geht's lang zum [Wiki](http://wiki.samp-udf.net/index.php?title=Hauptseite) und [Forum](http://samp-udf.net)
 ---
 
 Deutsch
